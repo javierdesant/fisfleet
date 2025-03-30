@@ -14841,7 +14841,7 @@
 											"top": 1015,
 											"width": 96.74169921875,
 											"height": 13,
-											"text": "-contratacar()",
+											"text": "-contraatacar()",
 											"horizontalAlignment": 0
 										}
 									],
@@ -15179,7 +15179,7 @@
 											"top": 535,
 											"width": 148.77978515625,
 											"height": 13,
-											"text": "Jugador"
+											"text": "Usuario"
 										},
 										{
 											"_type": "LabelView",
@@ -23568,7 +23568,7 @@
 							"_parent": {
 								"$ref": "AAAAAAGVmq2DkYPNpBI="
 							},
-							"name": "contratacar",
+							"name": "contraatacar",
 							"visibility": "private"
 						}
 					]
@@ -23674,7 +23674,7 @@
 					"_parent": {
 						"$ref": "AAAAAAGVmq2DkIK7qxI="
 					},
-					"name": "Jugador",
+					"name": "Usuario",
 					"ownedElements": [
 						{
 							"_type": "UMLGeneralization",
