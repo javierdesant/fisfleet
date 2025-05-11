@@ -3,7 +3,6 @@ package es.upm.etsisi.fis.fisfleet.domain.entities;
 import es.upm.etsisi.fis.model.IMovimiento;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import lombok.*;
 
 import java.io.Serializable;
@@ -37,10 +36,10 @@ public class MoveEntity implements Serializable, IMovimiento {
     @Column(name = "coordenada_y", nullable = false)
     private Integer coordinateY;
 
-    @Size(max = 10)
     @NotNull
+    @Enumerated(EnumType.STRING)
     @Column(name = "resultado", nullable = false, length = 10)
-    private String result;
+    private Result result;
 
     @Override
     public IMovimiento cloneMovimiento() {
@@ -73,4 +72,9 @@ public class MoveEntity implements Serializable, IMovimiento {
     public void setTime(long l) {
         this.id.setDate(Instant.ofEpochMilli(l));
     }
+
+    public enum Result {
+        HUNDIDO, TOCADO, AGUA
+    }
+
 }

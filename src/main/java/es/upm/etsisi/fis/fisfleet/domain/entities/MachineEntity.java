@@ -34,4 +34,13 @@ public class MachineEntity implements Serializable {
     @NotNull
     @Column(name = "algoritmo", nullable = false, length = 50)
     private String algorithm;
+
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    @Column(name = "dificultad", nullable = false, length = 20)
+    private Difficulty difficulty;
+
+    public enum Difficulty {
+        FACIL, MEDIO, DIFICIL
+    }
 }

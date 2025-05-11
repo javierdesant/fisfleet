@@ -25,7 +25,8 @@ CREATE TABLE maquina (
                          id         BIGSERIAL PRIMARY KEY,
                          jugador_id BIGINT UNIQUE REFERENCES jugador (id),
                          nombre_generado VARCHAR(50) UNIQUE NOT NULL,
-                         algoritmo VARCHAR(50) NOT NULL
+                         algoritmo  VARCHAR(50) NOT NULL,
+                         dificultad VARCHAR(20) NOT NULL CHECK (dificultad IN ('FACIL', 'MEDIO', 'DIFICIL'))
 );
 
 -- Resto de tablas
