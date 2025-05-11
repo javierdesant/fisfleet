@@ -18,7 +18,7 @@ public class PlayerEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
-    private Integer id;
+    private Long id;
 
     @OneToOne(mappedBy = "player")
     private MachineEntity machine;

@@ -23,7 +23,7 @@ public class GameEntity implements Serializable {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "partida_id_gen")
     @SequenceGenerator(name = "partida_id_gen", sequenceName = "partida_id_seq", allocationSize = 1)
     @Column(name = "id", nullable = false)
-    private Integer id;
+    private Long id;
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)

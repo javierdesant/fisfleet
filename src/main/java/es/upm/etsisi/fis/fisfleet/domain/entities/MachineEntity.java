@@ -19,7 +19,7 @@ public class MachineEntity implements Serializable {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "maquina_id_gen")
     @SequenceGenerator(name = "maquina_id_gen", sequenceName = "maquina_id_seq", allocationSize = 1)
     @Column(name = "id", nullable = false)
-    private Integer id;
+    private Long id;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "jugador_id")

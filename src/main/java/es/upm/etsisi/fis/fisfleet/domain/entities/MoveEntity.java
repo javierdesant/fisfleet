@@ -22,7 +22,7 @@ public class MoveEntity implements Serializable {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "movimiento_id_gen")
     @SequenceGenerator(name = "movimiento_id_gen", sequenceName = "movimiento_id_seq", allocationSize = 1)
     @Column(name = "id", nullable = false)
-    private Integer id;
+    private Long id;
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)

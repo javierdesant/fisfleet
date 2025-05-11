@@ -18,7 +18,7 @@ import java.time.Instant;
 public class ScoreEntity implements Serializable {
     @Id
     @Column(name = "jugador_id", nullable = false)
-    private Integer id;
+    private Long id;
 
     @MapsId
     @OneToOne(fetch = FetchType.LAZY, optional = false)
