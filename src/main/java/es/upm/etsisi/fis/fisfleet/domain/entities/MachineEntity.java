@@ -3,7 +3,9 @@ package es.upm.etsisi.fis.fisfleet.domain.entities;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
@@ -12,7 +14,7 @@ import java.io.Serializable;
 @Data
 @Entity
 @Table(name = "maquina")
-public class MaquinaEntity implements Serializable {
+public class MachineEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "maquina_id_gen")
     @SequenceGenerator(name = "maquina_id_gen", sequenceName = "maquina_id_seq", allocationSize = 1)
@@ -21,16 +23,15 @@ public class MaquinaEntity implements Serializable {
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "jugador_id")
-    private JugadorEntity jugador;
+    private PlayerEntity player;
 
     @Size(max = 50)
     @NotNull
     @Column(name = "nombre_generado", nullable = false, length = 50)
-    private String nombreGenerado;
+    private String generatedName;
 
     @Size(max = 50)
     @NotNull
     @Column(name = "algoritmo", nullable = false, length = 50)
-    private String algoritmo;
-
+    private String algorithm;
 }

@@ -3,24 +3,23 @@ package es.upm.etsisi.fis.fisfleet.domain.entities;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import utilidades.Cifrado;
 
 import java.io.Serializable;
 import java.time.Instant;
 import java.util.Collection;
-import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
 @Entity
 @Table(name = "usuarios")
-public class UsuarioEntity implements UserDetails, Serializable {
+public class UserEntity implements UserDetails, Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "usuarios_id_gen")
     @SequenceGenerator(name = "usuarios_id_gen", sequenceName = "usuarios_id_seq", allocationSize = 1)
@@ -39,22 +38,21 @@ public class UsuarioEntity implements UserDetails, Serializable {
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "jugador_id")
-    private JugadorEntity jugador;
+    private PlayerEntity player;
 
     @NotNull
     @ColumnDefault("CURRENT_TIMESTAMP")
     @Column(name = "fecha_registro", nullable = false)
-    private Instant fechaRegistro;
+    private Instant registrationDate;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        // TODO
         return null;
     }
 
     /**
-     * Este sistema no almacena ni utiliza contraseñas directamente, ya que la autenticación
-     * se gestiona a través del servicio LDAP de la UPM.
+     * This system does not store or use passwords directly, as authentication
+     * is managed through the UPM's LDAP service.
      */
     @Override
     public String getPassword() {

@@ -2,7 +2,9 @@ package es.upm.etsisi.fis.fisfleet.domain.entities;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 
 import java.io.Serializable;
@@ -13,7 +15,7 @@ import java.time.Instant;
 @Data
 @Entity
 @Table(name = "puntuacion")
-public class PuntuacionEntity implements Serializable {
+public class ScoreEntity implements Serializable {
     @Id
     @Column(name = "jugador_id", nullable = false)
     private Integer id;
@@ -21,16 +23,15 @@ public class PuntuacionEntity implements Serializable {
     @MapsId
     @OneToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "jugador_id", nullable = false)
-    private JugadorEntity jugador;
+    private PlayerEntity player;
 
     @NotNull
     @ColumnDefault("0")
     @Column(name = "puntos", nullable = false)
-    private Integer puntos;
+    private Integer points;
 
     @NotNull
     @ColumnDefault("CURRENT_TIMESTAMP")
     @Column(name = "fecha_actualizacion", nullable = false)
-    private Instant fechaActualizacion;
-
+    private Instant lastUpdateDate;
 }
