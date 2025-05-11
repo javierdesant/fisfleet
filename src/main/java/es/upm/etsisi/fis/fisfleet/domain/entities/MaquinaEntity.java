@@ -1,0 +1,36 @@
+package es.upm.etsisi.fis.fisfleet.domain.entities;
+
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+import lombok.*;
+
+import java.io.Serializable;
+
+@NoArgsConstructor
+@AllArgsConstructor
+@Data
+@Entity
+@Table(name = "maquina")
+public class MaquinaEntity implements Serializable {
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "maquina_id_gen")
+    @SequenceGenerator(name = "maquina_id_gen", sequenceName = "maquina_id_seq", allocationSize = 1)
+    @Column(name = "id", nullable = false)
+    private Integer id;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "jugador_id")
+    private JugadorEntity jugador;
+
+    @Size(max = 50)
+    @NotNull
+    @Column(name = "nombre_generado", nullable = false, length = 50)
+    private String nombreGenerado;
+
+    @Size(max = 50)
+    @NotNull
+    @Column(name = "algoritmo", nullable = false, length = 50)
+    private String algoritmo;
+
+}
