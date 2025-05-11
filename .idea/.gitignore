@@ -1,3 +1,15 @@
-# Default ignored files
-/shelf/
-/workspace.xml
+# Ignore local IDE configurations and session-specific files
+workspace.xml
+tasks.xml
+usage.statistics.xml
+shelf/
+
+# Exclude database and dynamic data configurations
+dataSources/
+dataSources.local.xml
+sqlDataSources.xml
+dynamic.xml
+
+# Ignore temporary or specific project files
+*.iml
+.idea_modules/
