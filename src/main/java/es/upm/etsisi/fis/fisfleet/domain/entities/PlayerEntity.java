@@ -35,8 +35,8 @@ public class PlayerEntity implements Serializable {
     @OneToMany(mappedBy = "winner")
     private Set<GameEntity> gamesWon = new LinkedHashSet<>();
 
-    @OneToOne(mappedBy = "player")
-    private ScoreEntity score;
+    @OneToMany(mappedBy = "player")
+    private Set<ScoreEntity> scores = new LinkedHashSet<>();
 
     @OneToOne(mappedBy = "player")
     private UserEntity user;

@@ -41,18 +41,19 @@ CREATE TABLE partida (
 );
 
 CREATE TABLE movimiento (
-                            id         BIGSERIAL PRIMARY KEY,
-                            partida_id BIGINT NOT NULL REFERENCES partida (id),
-                            jugador_id BIGINT NOT NULL REFERENCES jugador (id),
+                            partida_id BIGINT      NOT NULL REFERENCES partida (id),
+                            jugador_id BIGINT      NOT NULL REFERENCES jugador (id),
                             coordenada_x INT NOT NULL CHECK (coordenada_x BETWEEN 0 AND 9),
                             coordenada_y INT NOT NULL CHECK (coordenada_y BETWEEN 0 AND 9),
-                            resultado VARCHAR(10) NOT NULL CHECK (resultado IN ('HUNDIDO', 'TOCADO', 'AGUA')),
-                            fecha TIMESTAMP NOT NULL,
-                            UNIQUE (partida_id, jugador_id, coordenada_x, coordenada_y)
+                            resultado  VARCHAR(10) NOT NULL CHECK (resultado IN ('HUNDIDO', 'TOCADO', 'AGUA')),
+                            fecha      TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                            PRIMARY KEY (partida_id, jugador_id, fecha)
 );
 
 CREATE TABLE puntuacion (
-                            jugador_id BIGINT PRIMARY KEY REFERENCES jugador (id),
+                            partida_id BIGINT NOT NULL REFERENCES partida (id),
+                            jugador_id BIGINT NOT NULL REFERENCES jugador (id),
+                            PRIMARY KEY (partida_id, jugador_id),
                             puntos INT NOT NULL CHECK (puntos >= 0) DEFAULT 0,
                             fecha_actualizacion TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );

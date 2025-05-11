@@ -16,18 +16,15 @@ import java.time.Instant;
 @Entity
 @Table(name = "movimiento")
 public class MoveEntity implements Serializable, IMovimiento {
-    @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "movimiento_id_gen")
-    @SequenceGenerator(name = "movimiento_id_gen", sequenceName = "movimiento_id_seq", allocationSize = 1)
-    @Column(name = "id", nullable = false)
-    private Long id;
+    @EmbeddedId
+    private MoveId id;
 
-    @NotNull
+    @MapsId("partidaId")
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "partida_id", nullable = false)
     private GameEntity game;
 
-    @NotNull
+    @MapsId("jugadorId")
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "jugador_id", nullable = false)
     private PlayerEntity player;
@@ -45,33 +42,21 @@ public class MoveEntity implements Serializable, IMovimiento {
     @Column(name = "resultado", nullable = false, length = 10)
     private String result;
 
-    @NotNull
-    @Column(name = "fecha", nullable = false)
-    private Instant date;
-
     @Override
     public IMovimiento cloneMovimiento() {
         return MoveEntity.builder()
+                .id(this.id)
                 .game(this.game)
                 .player(this.player)
                 .coordinateX(this.coordinateX)
                 .coordinateY(this.coordinateY)
                 .result(this.result)
-                .date(this.date)
                 .build();
     }
 
-    /**
-     * Note: A GameEntity is assigned with only the id initialized, while the rest of the object is not loaded
-     * due to the use of LAZY proxies and LAZY developers. This could lead to issues such as LazyInitializationException
-     * if attempting to access other properties outside the context of an active JPA session. Make sure to consider this
-     * behavior in other parts of the system.
-     */
     @Override
     public void setPartidaId(@NonNull Long aLong) {
-        this.game = GameEntity.builder()
-                .id(aLong)
-                .build();
+        this.id.setGameId(aLong);
     }
 
     @Override
@@ -86,6 +71,6 @@ public class MoveEntity implements Serializable, IMovimiento {
 
     @Override
     public void setTime(long l) {
-        this.setDate(Instant.ofEpochMilli(l));
+        this.id.setDate(Instant.ofEpochMilli(l));
     }
 }
