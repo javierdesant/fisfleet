@@ -1,5 +1,7 @@
 package es.upm.etsisi.fis.fisfleet.domain.entities;
 
+import es.upm.etsisi.fis.fisfleet.utils.Role;
+import es.upm.etsisi.fis.fisfleet.utils.RoleMapper;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -8,12 +10,15 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import servidor.UPMUsers;
 
 import java.io.Serializable;
 import java.time.Instant;
 import java.util.Collection;
+import java.util.List;
+import java.util.stream.Stream;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -53,8 +58,17 @@ public class UserEntity implements UserDetails, Serializable {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        // TODO
-        return null;
+        Role role = RoleMapper.getRoleForUser(this.userType);
+
+        if (role == null) {
+            return List.of();
+        }
+
+        return Stream.concat(
+                role.getPermissions().stream()
+                        .map(permission -> new SimpleGrantedAuthority(permission.name())),
+                Stream.of(new SimpleGrantedAuthority("ROLE_" + role.name()))
+        ).toList();
     }
 
     /**
@@ -64,6 +78,7 @@ public class UserEntity implements UserDetails, Serializable {
     @Override
     public String getPassword() {
         // This may cause some trouble later
+        // It is indeed causing trouble
         return "{noop}none";
     }
 
