@@ -47,6 +47,7 @@ public class UserEntity implements UserDetails, Serializable {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
+        // TODO
         return null;
     }
 
@@ -56,6 +57,7 @@ public class UserEntity implements UserDetails, Serializable {
      */
     @Override
     public String getPassword() {
+        // This may cause some trouble later
         return "{noop}none";
     }
 
