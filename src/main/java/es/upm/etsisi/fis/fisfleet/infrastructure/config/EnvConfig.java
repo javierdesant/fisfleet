@@ -1,4 +1,4 @@
-package es.upm.etsisi.fis.fisfleet.config;
+package es.upm.etsisi.fis.fisfleet.infrastructure.config;
 
 import io.github.cdimascio.dotenv.Dotenv;
 import jakarta.annotation.PostConstruct;
