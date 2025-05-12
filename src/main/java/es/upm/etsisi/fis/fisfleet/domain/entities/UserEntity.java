@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import servidor.UPMUsers;
 
 import java.io.Serializable;
 import java.time.Instant;
@@ -44,6 +45,11 @@ public class UserEntity implements UserDetails, Serializable {
     @ColumnDefault("CURRENT_TIMESTAMP")
     @Column(name = "fecha_registro", nullable = false)
     private Instant registrationDate;
+
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    @Column(name = "tipo", nullable = false, length = 10)
+    private UPMUsers userType;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
