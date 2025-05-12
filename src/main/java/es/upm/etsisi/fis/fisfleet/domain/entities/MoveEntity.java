@@ -18,12 +18,12 @@ public class MoveEntity implements Serializable, IMovimiento {
     @EmbeddedId
     private MoveId id;
 
-    @MapsId("partidaId")
+    @MapsId("gameId")
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "partida_id", nullable = false)
     private GameEntity game;
 
-    @MapsId("jugadorId")
+    @MapsId("playerId")
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "jugador_id", nullable = false)
     private PlayerEntity player;
