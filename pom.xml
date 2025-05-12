@@ -13,6 +13,31 @@
 	<name>fisfleet</name>
 	<description>Battleship game with Spring Boot, React and login support</description>
 	<url>http://maven.apache.org</url>
+
+	<developers>
+		<developer>
+			<id>gonzalo.tpaucar</id>
+			<name>Raúl Gonzalo Toapanta</name>
+			<email>gonzalo.tpaucar@alumnos.upm.es</email>
+		</developer>
+		<developer>
+			<id>javier.desantiago</id>
+			<name>Javier de Santiago Soto</name>
+			<email>javier.desantiago@alumnos.upm.es</email>
+		</developer>
+		<developer>
+			<id>a.argandona</id>
+			<name>Araceli Argandoña Macollunco</name>
+			<email>a.argandona@alumnos.upm.es</email>
+		</developer>
+		<developer>
+			<id>daniel.rdenobrega</id>
+			<name>Daniel Rodríguez de Nobrega</name>
+			<email>daniel.rdenobrega@alumnos.upm.es</email>
+		</developer>
+		<!--TODO: add Estefanía-->
+	</developers>
+
 	<properties>
 		<java.version>17</java.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
