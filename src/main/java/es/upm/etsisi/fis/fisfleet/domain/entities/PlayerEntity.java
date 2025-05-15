@@ -47,13 +47,17 @@ public class PlayerEntity implements Serializable, IJugador {
     private UserEntity user;
 
     @Override
-    public boolean aceptarAccionComplementaria(TBarcoAccionComplementaria tBarcoAccionComplementaria, int i) {
-        return false;        // TODO
+    public boolean aceptarAccionComplementaria(TBarcoAccionComplementaria tBarcoAccionComplementaria, int cantidadDisponible) {
+        return cantidadDisponible>0;
     }
 
     @Override
     public int[] realizaTurno(char[][] chars) {
-        return new int[0];        // TODO
+        if (!moves.isEmpty()) {
+            MoveEntity move = moves.iterator().next();
+            return new int[] { move.getCoordinateX(), move.getCoordinateY() };
+        }
+        return new int[] { 0, 0 };
     }
 
     @Override
