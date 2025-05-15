@@ -1,0 +1,29 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans:
+    "Special Elite", cursive, ui-sans-serif, system-ui, sans-serif,
+    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+}
+
+html,
+body {
+  @apply bg-white leading-relaxed sm:text-base md:text-lg dark:bg-gray-950;
+
+  @media (prefers-color-scheme: dark) {
+    color-scheme: dark;
+  }
+}
+
+* {
+  @apply box-border;
+}
+
+button {
+  @apply text-center font-medium transition-all duration-200 ease-in-out;
+}
+
+input:focus,
+button:focus {
+  @apply ring-2 ring-blue-500 outline-none;
+}
