@@ -61,13 +61,15 @@ public class PlayerEntity implements Serializable, IJugador {
     }
 
     @Override
-    public void addMovimiento(IMovimiento iMovimiento) {
-        // TODO
+    public void addMovimiento(IMovimiento movIn) {
+        if (movIn instanceof MoveEntity) {
+            moves.add((MoveEntity) movIn);
+        }
     }
 
     @Override
     public String getNombre() {
-        return "";        // TODO
+        return (user != null && user.getAlias() != null) ? user.getAlias() : "";
     }
 
     @Override
