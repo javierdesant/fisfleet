@@ -79,5 +79,5 @@ public class UserEntity implements UserDetails, Serializable {
     public String getUsername() {
         return this.usernameHash;
     }
-    
+
 }
