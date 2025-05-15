@@ -23,8 +23,8 @@ export const links: Route.LinksFunction = () => [
   },
   {
     rel: "icon",
-    href: "/favicon.png", // Ruta al favicon.png
-    type: "image/png",
+    href: "/fisfleet-logo-favicon.svg",
+    type: "image/svg+xml",
   },
 ];
 
