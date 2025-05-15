@@ -1,5 +1,6 @@
 package es.upm.etsisi.fis.fisfleet.domain.entities;
 
+import es.upm.etsisi.fis.model.TDificultad;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -8,6 +9,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -15,11 +18,6 @@ import java.io.Serializable;
 @Entity
 @Table(name = "maquina")
 public class MachineEntity implements Serializable {
-
-    // TODO: Consider the need to extend or map `Maquina` within `MachineEntity`, or create a dedicated mapper class to
-    //   handle transitions between the business domain (`Maquina`) and persistence layer (`MachineEntity`).
-    //  Maquina has an `algoritmo` field, which is private and encapsulated, making it difficult to directly access or manipulate.
-    //  A mapping strategy may also help maintain separation of concerns and ease future maintenance or modifications.
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "maquina_id_gen")
@@ -44,9 +42,6 @@ public class MachineEntity implements Serializable {
     @NotNull
     @Enumerated(EnumType.STRING)
     @Column(name = "dificultad", nullable = false, length = 20)
-    private Difficulty difficulty;
+    private TDificultad difficulty;
 
-    public enum Difficulty {
-        FACIL, MEDIO, DIFICIL
-    }
 }
