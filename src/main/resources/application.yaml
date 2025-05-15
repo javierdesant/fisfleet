@@ -18,3 +18,9 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
+
+#  TODO: find out how to set token parameters
+#  security:
+#    jwt:
+#      expiration-in-minutes: 30
+#      secret-key: RG9uIFF1aWpvdGUgc295IHkgbWkgcHJvZmVzaW9uIGxhIGRlIGFuZGFudGUgY2FiYWxsZXJpYQ
