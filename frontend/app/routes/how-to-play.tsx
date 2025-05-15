@@ -3,11 +3,11 @@ import React from "react";
 
 export const meta: Route.MetaFunction = () => {
   return [
-    { title: "Match" },
-    { name: "description", content: "Your match page" },
+    { title: "How to play" },
+    { name: "description", content: "How to play page" },
   ];
 };
 
-export default function MatchPage() {
-return <h1>Match</h1>;
+export default function HowToPlayPage() {
+  return <h1>HowToPlay</h1>;
 }
