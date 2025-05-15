@@ -47,7 +47,16 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
-  return <Outlet />;
+  return (
+  <div className="min-h-screen bg-gradient-to-br from-alice_blue-500 to-alice_blue-600 dark:from-oxford_blue-500 dark:to-oxford_blue-400 text-eerie_black-500 dark:text-seasalt-500">
+    <header className="p-4 shadow border-b border-onyx-500  dark:border-white-500">
+      <h1 className="text-3xl font-bold">FisFleet</h1>
+    </header>
+    <main className="p-6">
+      <Outlet />
+    </main>
+  </div>
+);
 }
 
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
