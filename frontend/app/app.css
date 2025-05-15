@@ -15,6 +15,10 @@ body {
   }
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 @theme {
   --font-sans:
           "Inter", cursive, ui-sans-serif, system-ui, sans-serif,
