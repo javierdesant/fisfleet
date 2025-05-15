@@ -10,6 +10,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -73,18 +74,19 @@ public class PlayerEntity implements Serializable, IJugador {
     }
 
     @Override
-    public void addPuntuacion(IPuntuacion iPuntuacion) {
-        // TODO
-
+    public void addPuntuacion(IPuntuacion puntos) {
+        if (puntos instanceof ScoreEntity) {
+            scores.add((ScoreEntity) puntos);
+        }
     }
 
     @Override
     public List<IMovimiento> getMovimientos() {
-        return List.of();        // TODO
+        return new ArrayList<>(moves);
     }
 
     @Override
     public List<IPuntuacion> getPuntuaciones() {
-        return List.of();        // TODO
+        return new ArrayList<>(scores);
     }
 }
