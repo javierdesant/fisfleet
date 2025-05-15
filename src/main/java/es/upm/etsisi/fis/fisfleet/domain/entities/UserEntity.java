@@ -1,5 +1,7 @@
 package es.upm.etsisi.fis.fisfleet.domain.entities;
 
+import es.upm.etsisi.fis.fisfleet.utils.RolePermission;
+import es.upm.etsisi.fis.fisfleet.utils.RoleMapper;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -8,11 +10,15 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import servidor.UPMUsers;
 
 import java.io.Serializable;
 import java.time.Instant;
 import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -20,6 +26,7 @@ import java.util.Collection;
 @Entity
 @Table(name = "usuarios")
 public class UserEntity implements UserDetails, Serializable {
+
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "usuarios_id_gen")
     @SequenceGenerator(name = "usuarios_id_gen", sequenceName = "usuarios_id_seq", allocationSize = 1)
@@ -41,14 +48,21 @@ public class UserEntity implements UserDetails, Serializable {
     private PlayerEntity player;
 
     @NotNull
-    @ColumnDefault("CURRENT_TIMESTAMP")
     @Column(name = "fecha_registro", nullable = false)
+    @ColumnDefault("CURRENT_TIMESTAMP")
     private Instant registrationDate;
+
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    @Column(name = "upm_user", nullable = false, length = 20)
+    private UPMUsers upmUser;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        // TODO
-        return null;
+        List<RolePermission> permissions = RoleMapper.getPermissionsForUser(this.upmUser);
+        return permissions.stream()
+                .map(permission -> new SimpleGrantedAuthority("ROLE_" + permission.name()))
+                .collect(Collectors.toList());
     }
 
     /**
@@ -63,6 +77,7 @@ public class UserEntity implements UserDetails, Serializable {
 
     @Override
     public String getUsername() {
-        return this.getUsernameHash();
+        return this.usernameHash;
     }
+    
 }
