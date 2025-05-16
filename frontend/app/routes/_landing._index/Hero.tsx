@@ -4,7 +4,7 @@ import Logo from "./Logo";
 function Hero() {
   return (
     <section id="hero-area" className="flex flex-col items-center pt-48 pb-10">
-      <div className="mx-auto px-5">
+      <div className="mx-auto flex flex-col items-center px-5">
         <div className="mb-6 flex flex-col items-center justify-center gap-4 lg:flex-row">
           <Logo
             title="Fisfleet logo"
@@ -17,20 +17,13 @@ function Hero() {
             className="mx-auto h-48"
           />
         </div>
-        <div className="mb-6">
-          <img
-            src="~/assets/images/fisfleet-title.svg"
-            alt="Fisfleet Title"
-            className="mx-auto h-12"
-          />
-        </div>
         <div className="mt-4">
           <a
             href="#"
             rel="nofollow"
-            className="rounded-full bg-blue-600 px-10 py-3 text-white duration-300 hover:bg-blue-500"
+            className="bg-light_red-500 hover:bg-light_red-400 text-eerie_black-500 dark:bg-light_red-dark-500 hover:dark:bg-light_red-dark-400 dark:text-seasalt-500 rounded-full px-10 py-3 text-2xl font-black duration-300"
           >
-            Download Now
+            Play Now!
           </a>
         </div>
       </div>
