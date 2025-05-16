@@ -2,6 +2,7 @@ package es.upm.etsisi.fis.fisfleet.infrastructure.config.security.filter;
 
 import es.upm.etsisi.fis.fisfleet.domain.repositories.UserRepository;
 import es.upm.etsisi.fis.fisfleet.infrastructure.services.JwtTokenService;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -49,9 +50,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         return authorizationHeader.split(" ")[1];
     }
 
-    private UserDetails fetchUserDetails(String email) {
-        return null; // FIXME: implement... userRepository.findByEmail(email)
-//                                          .orElseThrow(EntityNotFoundException::new);
+    private UserDetails fetchUserDetails(String usernameHash) {
+        return userRepository.findByUsernameHash(usernameHash)
+                .orElseThrow(EntityNotFoundException::new);
     }
 
     private void authenticateUser(HttpServletRequest request, UserDetails userDetails) {
