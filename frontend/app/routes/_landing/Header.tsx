@@ -37,7 +37,7 @@ function Header() {
 
   return (
     <header id="header-wrap" className="relative">
-      <div className="bg-alice_blue-500 dark:bg-oxford_blue-500 fixed top-0 left-0 z-30 w-full shadow">
+      <div className="fixed top-0 left-0 z-30 w-full bg-white shadow dark:bg-black">
         <nav className="flex items-center justify-between py-2">
           <ul className="mr-auto items-center justify-center lg:flex">
             {[
