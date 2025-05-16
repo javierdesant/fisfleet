@@ -10,7 +10,7 @@ public class EnvConfig {
     @PostConstruct
     public void loadEnvVariables() {
         Dotenv dotenv = Dotenv.load();
-        System.setProperty("POSTGRES_USER", dotenv.get("POSTGRES_USER"));
-        System.setProperty("POSTGRES_PASSWORD", dotenv.get("POSTGRES_PASSWORD"));
+        System.setProperty("POSTGRES_USER", dotenv.get("POSTGRES_USER", "default_user"));
+        System.setProperty("POSTGRES_PASSWORD", dotenv.get("POSTGRES_PASSWORD", "default_password"));
     }
 }
