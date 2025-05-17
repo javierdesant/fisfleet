@@ -54,11 +54,11 @@ public class UserEntity implements UserDetails, Serializable {
     @NotNull
     @Enumerated(EnumType.STRING)
     @Column(name = "tipo", nullable = false, length = 10)
-    private UPMUsers userType;
+    private UPMUsers UPMUserType;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        Role role = RoleMapper.getRoleForUser(this.userType);
+        Role role = RoleMapper.getRoleForUPMUser(this.UPMUserType);
 
         if (role == null) {
             return List.of();

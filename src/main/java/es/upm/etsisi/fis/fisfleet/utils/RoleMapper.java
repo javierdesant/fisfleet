@@ -15,7 +15,7 @@ public class RoleMapper {
         userRoleMap.put(UPMUsers.ALUMNO, Role.ALUMNO);
     }
 
-    public static Role getRoleForUser(UPMUsers upmUser) {
+    public static Role getRoleForUPMUser(UPMUsers upmUser) {
         return userRoleMap.get(upmUser);
     }
 
