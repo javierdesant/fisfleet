@@ -14,16 +14,15 @@ import java.util.Date;
 import java.util.Map;
 
 @Primary
-@Service
 @Slf4j
-public class JwtTokenService implements TokenService {
+@Service
+public class JwtService implements TokenService {
 
     private final JwtKeyProvider jwtKeyProvider;
-    // TODO: define value in config
     @Value("${security.jwt.expiration-in-minutes}")
     private Long EXPIRATION_IN_MINUTES;
 
-    public JwtTokenService(JwtKeyProvider jwtKeyProvider) {
+    public JwtService(JwtKeyProvider jwtKeyProvider) {
         this.jwtKeyProvider = jwtKeyProvider;
     }
 
