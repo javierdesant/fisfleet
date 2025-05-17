@@ -41,6 +41,8 @@ public class UserServiceImpl implements UserService {
         return userRepository.save(newUser);
     }
 
+    // TODO
+
     @Override
     public UserEntity read(Long aLong) {
         return null;
