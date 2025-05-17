@@ -13,7 +13,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 @Data
 public class AuthenticationRequest implements Serializable {
-    @NotBlank(message = "The username cannot be empty.")
+    @NotBlank(message = "The username cannot be empty, blank or null.")
     @ValidUPMEmail
     private String username;    // email in this case
 
