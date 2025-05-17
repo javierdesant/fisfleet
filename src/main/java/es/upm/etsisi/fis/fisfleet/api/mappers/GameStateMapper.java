@@ -14,7 +14,6 @@ public interface GameStateMapper {
     @Mapping(source = "turnoName", target = "currentTurn")
     @Mapping(expression = "java(match.getTableros().get(0))", target = "player1Board")
     @Mapping(expression = "java(match.getTableros().get(1))", target = "player2Board")
-    @Mapping(target = "winner", ignore = true)
     GameStateDTO mapToGameStateDTO(IPartida match);
 
     @Named("stringToLongOrNull")
