@@ -5,7 +5,6 @@ import es.upm.etsisi.fis.model.IMovimiento;
 import es.upm.etsisi.fis.model.IPuntuacion;
 import es.upm.etsisi.fis.model.TBarcoAccionComplementaria;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -15,18 +14,15 @@ import java.util.List;
 import java.util.Set;
 
 @NoArgsConstructor
-@AllArgsConstructor
 @Data
 @Entity
+@Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "jugador")
-public class PlayerEntity implements Serializable, IJugador {
+public abstract class PlayerEntity implements Serializable, IJugador {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
-
-    @OneToOne(mappedBy = "player")
-    private MachineEntity machine;
 
     @OneToMany(mappedBy = "player")
     private Set<MoveEntity> moves = new LinkedHashSet<>();
@@ -43,17 +39,14 @@ public class PlayerEntity implements Serializable, IJugador {
     @OneToMany(mappedBy = "player")
     private Set<ScoreEntity> scores = new LinkedHashSet<>();
 
-    @OneToOne(mappedBy = "player")
-    private UserEntity user;
-
     @Override
     public boolean aceptarAccionComplementaria(TBarcoAccionComplementaria tBarcoAccionComplementaria, int i) {
-        return false;        // TODO
+        return false; // TODO
     }
 
     @Override
     public int[] realizaTurno(char[][] chars) {
-        return new int[0];        // TODO
+        return new int[0]; // TODO
     }
 
     @Override
@@ -63,22 +56,21 @@ public class PlayerEntity implements Serializable, IJugador {
 
     @Override
     public String getNombre() {
-        return "";        // TODO
+        return ""; // TODO
     }
 
     @Override
     public void addPuntuacion(IPuntuacion iPuntuacion) {
         // TODO
-
     }
 
     @Override
     public List<IMovimiento> getMovimientos() {
-        return List.of();        // TODO
+        return List.of(); // TODO
     }
 
     @Override
     public List<IPuntuacion> getPuntuaciones() {
-        return List.of();        // TODO
+        return List.of(); // TODO
     }
 }

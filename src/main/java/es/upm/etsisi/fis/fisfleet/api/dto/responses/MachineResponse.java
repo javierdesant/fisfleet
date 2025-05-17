@@ -11,7 +11,6 @@ import lombok.NoArgsConstructor;
 @Builder
 public class MachineResponse {
     private Long id;
-    private Long playerId;
     private String generatedName;
     private String algorithm;
     private String difficulty;

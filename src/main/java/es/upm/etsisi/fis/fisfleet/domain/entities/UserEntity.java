@@ -5,9 +5,7 @@ import es.upm.etsisi.fis.fisfleet.utils.RoleMapper;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -23,14 +21,11 @@ import java.util.stream.Stream;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
+@EqualsAndHashCode(callSuper = true)
 @Entity
+@Builder
 @Table(name = "usuarios")
-public class UserEntity implements UserDetails, Serializable {
-    @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "usuarios_id_gen")
-    @SequenceGenerator(name = "usuarios_id_gen", sequenceName = "usuarios_id_seq", allocationSize = 1)
-    @Column(name = "id", nullable = false)
-    private Long id;
+public class UserEntity extends PlayerEntity implements UserDetails, Serializable {
 
     @Size(max = 64)
     @NotNull
@@ -41,10 +36,6 @@ public class UserEntity implements UserDetails, Serializable {
     @NotNull
     @Column(name = "alias", nullable = false, length = 50)
     private String alias;
-
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "jugador_id")
-    private PlayerEntity player;
 
     @NotNull
     @ColumnDefault("CURRENT_TIMESTAMP")
@@ -71,10 +62,6 @@ public class UserEntity implements UserDetails, Serializable {
         ).toList();
     }
 
-    /**
-     * This system does not store or use passwords directly, as authentication
-     * is managed through the UPM's LDAP service.
-     */
     @Override
     public String getPassword() {
         return "{noop}none";
