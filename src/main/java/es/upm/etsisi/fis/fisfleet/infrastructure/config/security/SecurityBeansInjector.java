@@ -41,11 +41,11 @@ public class SecurityBeansInjector {
 
     @Bean
     public UserDetailsService userDetailsService() {
-        return this::loadUserByEmail;
+        return this::loadUserByUsernameHash;
     }
 
-    private UserDetails loadUserByEmail(String email) throws UsernameNotFoundException {
-        return null; // FIXME: implement... userRepository.findByEmail(email)
-//                                          .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado: " + email));
+    private UserDetails loadUserByUsernameHash(String usernameHash) throws UsernameNotFoundException {
+        return userRepository.findByUsernameHash(usernameHash)
+                .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
     }
 }
