@@ -7,6 +7,7 @@ import es.upm.etsisi.fis.fisfleet.api.dto.responses.UserResponse;
 import es.upm.etsisi.fis.fisfleet.api.mappers.UserMapper;
 import es.upm.etsisi.fis.fisfleet.domain.entities.UserEntity;
 import es.upm.etsisi.fis.fisfleet.domain.repositories.UserRepository;
+import es.upm.etsisi.fis.fisfleet.infrastructure.config.security.LDAPAuthenticator;
 import es.upm.etsisi.fis.fisfleet.utils.RoleMapper;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,7 +17,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import utilidades.Cifrado;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -42,7 +42,7 @@ public class LDAPAuthService implements AuthenticationService {
 
     @Override
     public AuthenticationResponse login(AuthenticationRequest request) {
-        String usernameHash = Cifrado.cifrar(request.getUsername());
+        String usernameHash = LDAPAuthenticator.authenticate(request.getUsername());
         UserEntity user = this.findUserByUsernameHash(usernameHash);
 
         this.authenticateUser(usernameHash, user.getPassword(), user.getAuthorities());
