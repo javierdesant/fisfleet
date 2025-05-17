@@ -77,8 +77,6 @@ public class UserEntity implements UserDetails, Serializable {
      */
     @Override
     public String getPassword() {
-        // This may cause some trouble later
-        // It is indeed causing trouble
         return "{noop}none";
     }
 
