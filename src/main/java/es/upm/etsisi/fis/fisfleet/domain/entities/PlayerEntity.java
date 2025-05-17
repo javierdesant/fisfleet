@@ -7,6 +7,7 @@ import es.upm.etsisi.fis.model.TBarcoAccionComplementaria;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
 import java.util.LinkedHashSet;
@@ -15,6 +16,7 @@ import java.util.Set;
 
 @NoArgsConstructor
 @Data
+@SuperBuilder
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "jugador")

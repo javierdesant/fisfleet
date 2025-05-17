@@ -5,7 +5,11 @@ import es.upm.etsisi.fis.fisfleet.utils.RoleMapper;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.ColumnDefault;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -22,8 +26,8 @@ import java.util.stream.Stream;
 @AllArgsConstructor
 @Data
 @EqualsAndHashCode(callSuper = true)
+@SuperBuilder
 @Entity
-@Builder
 @Table(name = "usuarios")
 public class UserEntity extends PlayerEntity implements UserDetails, Serializable {
 
