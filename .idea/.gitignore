@@ -13,3 +13,7 @@ dynamic.xml
 # Ignore temporary or specific project files
 *.iml
 .idea_modules/
+vcs.xml
+jsLibraryMappings.xml
+.name
+httpRequests/
