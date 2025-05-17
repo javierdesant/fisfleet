@@ -23,13 +23,6 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
     }
 
-//    FIXME: is this needed ?
-//     maybe yes? maybe not? I need a coffee.
-//    @ExceptionHandler(InvalidPasswordException.class)
-//    public ResponseEntity<String> handleInvalidPasswordException(InvalidPasswordException ex) {
-//        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
-//    }
-
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, String>> handleValidationExceptions(MethodArgumentNotValidException ex) {
         Map<String, String> errors = new HashMap<>();
