@@ -13,7 +13,8 @@ public enum Role {
             RolePermission.VIEW_ALL_SCORES,
             RolePermission.MANAGE_USERS,
             RolePermission.CONFIGURE_SYSTEM,
-            RolePermission.ACCESS_ADMIN_PANEL
+            RolePermission.ACCESS_ADMIN_PANEL,
+            RolePermission.LOGIN
     )),
 
     ALUMNO(List.of(
