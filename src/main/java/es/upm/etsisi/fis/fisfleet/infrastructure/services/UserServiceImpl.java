@@ -4,6 +4,7 @@ import es.upm.etsisi.fis.fisfleet.api.dto.requests.UserRequest;
 import es.upm.etsisi.fis.fisfleet.domain.entities.UserEntity;
 import es.upm.etsisi.fis.fisfleet.domain.repositories.UserRepository;
 import es.upm.etsisi.fis.fisfleet.infrastructure.config.security.LDAPAuthenticator;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -41,20 +42,32 @@ public class UserServiceImpl implements UserService {
         return userRepository.save(newUser);
     }
 
-    // TODO
-
     @Override
-    public UserEntity read(Long aLong) {
-        return null;
+    public UserEntity read(Long id) {
+        return userRepository.findById(id)
+                .orElseThrow(EntityNotFoundException::new);
     }
 
     @Override
-    public UserEntity update(UserRequest request, Long aLong) {
-        return null;
+    public UserEntity update(UserRequest request, Long id) {
+        UserEntity existingUser = userRepository.findById(id)
+                .orElseThrow(EntityNotFoundException::new);
+
+        log.info("Updating user with id: {}", id);
+
+        existingUser.setAlias(request.getAlias());
+        existingUser.setUPMUserType(ObtencionDeRol.get_UPM_AccountRol(request.getUsername()));
+
+        return userRepository.save(existingUser);
     }
 
     @Override
-    public void delete(Long aLong) {
+    public void delete(Long id) {
+        UserEntity existingUser = userRepository.findById(id)
+                .orElseThrow(EntityNotFoundException::new);
 
+        log.info("Deleting user with id: {}", id);
+
+        userRepository.delete(existingUser);
     }
 }
