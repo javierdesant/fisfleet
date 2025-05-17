@@ -12,7 +12,7 @@ import java.util.List;
 @AllArgsConstructor
 @Data
 @Builder
-public class GameResponse {
+public class GameResultResponse {
     private Long id;
     private Long player1Id;
     private Long player2Id;

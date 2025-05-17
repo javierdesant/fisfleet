@@ -18,7 +18,7 @@ import java.util.Set;
 @Builder
 @Entity
 @Table(name = "partida")
-public class GameEntity implements Serializable {
+public class GameResultEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "partida_id_gen")
     @SequenceGenerator(name = "partida_id_gen", sequenceName = "partida_id_seq", allocationSize = 1)

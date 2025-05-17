@@ -14,7 +14,7 @@ import java.time.Instant;
 @Data
 @Builder
 @ValidWinnerId
-public class GameRequest {
+public class GameResultRequest {
 
     @NotNull(message = "Player1Id cannot be empty.")
     private Long player1Id;

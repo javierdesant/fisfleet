@@ -28,13 +28,13 @@ public abstract class PlayerEntity implements Serializable, IJugador {
     private Set<MoveEntity> moves = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "player1")
-    private Set<GameEntity> gamesAsPlayer1 = new LinkedHashSet<>();
+    private Set<GameResultEntity> gamesAsPlayer1 = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "player2")
-    private Set<GameEntity> gamesAsPlayer2 = new LinkedHashSet<>();
+    private Set<GameResultEntity> gamesAsPlayer2 = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "winner")
-    private Set<GameEntity> gamesWon = new LinkedHashSet<>();
+    private Set<GameResultEntity> gamesWon = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "player")
     private Set<ScoreEntity> scores = new LinkedHashSet<>();

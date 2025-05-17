@@ -13,7 +13,7 @@ import java.util.List;
 @Builder
 public class PlayerResponse {
     private Long id;
-    private List<GameResponse> gamesAsPlayer1;
-    private List<GameResponse> gamesAsPlayer2;
-    private List<GameResponse> gamesWon;
+    private List<GameResultResponse> gamesAsPlayer1;
+    private List<GameResultResponse> gamesAsPlayer2;
+    private List<GameResultResponse> gamesWon;
 }

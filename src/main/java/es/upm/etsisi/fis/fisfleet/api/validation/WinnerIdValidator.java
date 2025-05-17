@@ -1,13 +1,13 @@
 package es.upm.etsisi.fis.fisfleet.api.validation;
 
-import es.upm.etsisi.fis.fisfleet.api.dto.requests.GameRequest;
+import es.upm.etsisi.fis.fisfleet.api.dto.requests.GameResultRequest;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
-public class WinnerIdValidator implements ConstraintValidator<ValidWinnerId, GameRequest> {
+public class WinnerIdValidator implements ConstraintValidator<ValidWinnerId, GameResultRequest> {
 
     @Override
-    public boolean isValid(GameRequest request, ConstraintValidatorContext context) {
+    public boolean isValid(GameResultRequest request, ConstraintValidatorContext context) {
         if (request.getWinnerId() == null || request.getPlayer1Id() == null || request.getPlayer2Id() == null) {
             return true;
         }
