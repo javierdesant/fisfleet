@@ -11,7 +11,6 @@ import servidor.ObtencionDeRol;
 
 import java.time.Instant;
 import java.util.HashSet;
-import java.util.Optional;
 
 @Slf4j
 @AllArgsConstructor
@@ -43,17 +42,17 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserEntity read(String s) {
-        return null;    // FIXME
+    public UserEntity read(Long aLong) {
+        return null;
     }
 
     @Override
-    public UserEntity update(UserRequest request, String s) {
-        return null;    // FIXME
+    public UserEntity update(UserRequest request, Long aLong) {
+        return null;
     }
 
     @Override
-    public void delete(String s) {
-        // TODO
+    public void delete(Long aLong) {
+
     }
 }
