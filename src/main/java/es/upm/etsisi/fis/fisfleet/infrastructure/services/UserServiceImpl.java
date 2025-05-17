@@ -9,6 +9,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import servidor.ObtencionDeRol;
+import servidor.UPMUsers;
 
 import java.time.Instant;
 import java.util.HashSet;
@@ -25,13 +26,19 @@ public class UserServiceImpl implements UserService {
         String username = request.getUsername();
         log.info("Creating user with username: {}", username);
 
+        if (!ObtencionDeRol.get_UPM_AccountRol(username).equals(UPMUsers.ALUMNO)) {
+            log.warn("Registration is restricted to students." +
+                    "Administrators must be registered manually by a system administrator.");
+            throw new IllegalArgumentException("Registration is restricted to students.");
+        }
+
         String usernameHash = LDAPAuthenticator.authenticate(username);
 
         UserEntity newUser = UserEntity.builder()
                 .usernameHash(usernameHash)
                 .alias(request.getAlias())
                 .registrationDate(Instant.now())
-                .UPMUserType(ObtencionDeRol.get_UPM_AccountRol(username))
+                .UPMUserType(UPMUsers.ALUMNO)
                 .moves(new HashSet<>())
                 .scores(new HashSet<>())
                 .gamesAsPlayer1(new HashSet<>())
