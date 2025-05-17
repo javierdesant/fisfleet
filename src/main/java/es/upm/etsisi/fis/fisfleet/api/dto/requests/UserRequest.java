@@ -28,6 +28,7 @@ public class UserRequest {
     @NotInForbiddenUsernames
     private String alias;
 
-    @NotNull(message = "The playerId cannot be empty.")     // FIXME ?
+    // FIXME: this has to be generated for sure...
+    @NotNull(message = "The playerId cannot be empty.")     //  still no idea about how to do it tho
     private Long playerId;
 }

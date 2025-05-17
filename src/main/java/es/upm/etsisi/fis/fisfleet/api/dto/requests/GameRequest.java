@@ -22,7 +22,6 @@ public class GameRequest {
     @NotNull(message = "Player2Id cannot be empty.")
     private Long player2Id;
 
-    // FIXME maybe it can be generated on the spot? idk
     @NotNull(message = "The start date cannot be empty.")
     private Instant startDate;
 
