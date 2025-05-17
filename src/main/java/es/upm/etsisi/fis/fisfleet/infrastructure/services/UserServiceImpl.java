@@ -5,6 +5,7 @@ import es.upm.etsisi.fis.fisfleet.domain.entities.UserEntity;
 import es.upm.etsisi.fis.fisfleet.domain.repositories.UserRepository;
 import es.upm.etsisi.fis.fisfleet.infrastructure.config.security.LDAPAuthenticator;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -14,6 +15,7 @@ import servidor.UPMUsers;
 import java.time.Instant;
 import java.util.HashSet;
 
+@Transactional
 @Slf4j
 @AllArgsConstructor
 @Service
