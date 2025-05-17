@@ -11,7 +11,6 @@ import es.upm.etsisi.fis.fisfleet.infrastructure.config.security.LDAPAuthenticat
 import es.upm.etsisi.fis.fisfleet.utils.RoleMapper;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -27,7 +26,6 @@ import java.util.Map;
 @Service
 public class LDAPAuthService implements AuthenticationService {
 
-    private final AuthenticationManager authenticationManager;
     private final TokenService tokenService;
     private final UserRepository userRepository;
     private final UserService userService;
