@@ -4,6 +4,7 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 .env
+TODO/
 
 ### IntelliJ IDEA ###
 .idea/modules.xml
