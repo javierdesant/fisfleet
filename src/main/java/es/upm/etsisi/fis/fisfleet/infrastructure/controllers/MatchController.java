@@ -1,7 +1,7 @@
 package es.upm.etsisi.fis.fisfleet.infrastructure.controllers;
 
 import es.upm.etsisi.fis.controller.ControladorPartida;
-import es.upm.etsisi.fis.fisfleet.infrastructure.adapters.WebGameViewController;
+import es.upm.etsisi.fis.fisfleet.infrastructure.adapters.VistaWebControladoraPartida;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
