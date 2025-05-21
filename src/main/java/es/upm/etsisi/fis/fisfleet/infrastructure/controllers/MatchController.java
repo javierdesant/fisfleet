@@ -1,7 +1,7 @@
 package es.upm.etsisi.fis.fisfleet.infrastructure.controllers;
 
 import es.upm.etsisi.fis.controller.ControladorPartida;
-import es.upm.etsisi.fis.fisfleet.infrastructure.adapters.VistaWebControladoraPartida;
+import es.upm.etsisi.fis.fisfleet.infrastructure.adapters.WebGameViewController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,7 +15,7 @@ public class MatchController {
     private final ControladorPartida controladorPartida;
 
     @Autowired
-    public MatchController(VistaWebControladoraPartida vistaWeb) {
+    public MatchController(WebGameViewController vistaWeb) {
         this.controladorPartida = ControladorPartida.getInstance(null);
         this.controladorPartida.setGui(vistaWeb);
     }
