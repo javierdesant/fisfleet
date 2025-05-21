@@ -15,6 +15,5 @@ public class UserResponse {
     private Long id;
     private String usernameHash;
     private String alias;
-    private Long playerId;
     private Instant registrationDate;
 }

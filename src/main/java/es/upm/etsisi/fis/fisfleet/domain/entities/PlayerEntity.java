@@ -5,9 +5,9 @@ import es.upm.etsisi.fis.model.IMovimiento;
 import es.upm.etsisi.fis.model.IPuntuacion;
 import es.upm.etsisi.fis.model.TBarcoAccionComplementaria;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -16,36 +16,31 @@ import java.util.List;
 import java.util.Set;
 
 @NoArgsConstructor
-@AllArgsConstructor
 @Data
+@SuperBuilder
 @Entity
+@Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "jugador")
-public class PlayerEntity implements Serializable, IJugador {
+public abstract class PlayerEntity implements Serializable, IJugador {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @OneToOne(mappedBy = "player")
-    private MachineEntity machine;
-
     @OneToMany(mappedBy = "player")
     private Set<MoveEntity> moves = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "player1")
-    private Set<GameEntity> gamesAsPlayer1 = new LinkedHashSet<>();
+    private Set<GameResultEntity> gamesAsPlayer1 = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "player2")
-    private Set<GameEntity> gamesAsPlayer2 = new LinkedHashSet<>();
+    private Set<GameResultEntity> gamesAsPlayer2 = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "winner")
-    private Set<GameEntity> gamesWon = new LinkedHashSet<>();
+    private Set<GameResultEntity> gamesWon = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "player")
     private Set<ScoreEntity> scores = new LinkedHashSet<>();
-
-    @OneToOne(mappedBy = "player")
-    private UserEntity user;
 
     @Override
     public boolean aceptarAccionComplementaria(TBarcoAccionComplementaria tBarcoAccionComplementaria, int cantidadDisponible) {
@@ -66,11 +61,6 @@ public class PlayerEntity implements Serializable, IJugador {
         if (movIn instanceof MoveEntity) {
             moves.add((MoveEntity) movIn);
         }
-    }
-
-    @Override
-    public String getNombre() {
-        return (user != null && user.getAlias() != null) ? user.getAlias() : "";
     }
 
     @Override

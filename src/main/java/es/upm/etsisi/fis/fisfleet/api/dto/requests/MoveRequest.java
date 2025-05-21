@@ -1,9 +1,9 @@
 package es.upm.etsisi.fis.fisfleet.api.dto.requests;
 
+import es.upm.etsisi.fis.fisfleet.api.dto.SpecialAbility;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -21,7 +21,6 @@ public class MoveRequest {
     @NotNull(message = "The playerId cannot be empty.")
     private Long playerId;
 
-    // Validate that the coordinates are within the bounds of a 10x10 board
     @NotNull(message = "The X coordinate cannot be empty.")
     @Min(value = 0, message = "The X coordinate cannot be less than 0.")
     @Max(value = 9, message = "The X coordinate cannot be greater than 9.")
@@ -32,10 +31,5 @@ public class MoveRequest {
     @Max(value = 9, message = "The Y coordinate cannot be greater than 9.")
     private Integer coordinateY;
 
-    @NotNull(message = "The result cannot be empty.")
-    @Pattern(
-            regexp = "^(HUNDIDO|TOCADO|AGUA)$",
-            message = "The result must be HUNDIDO, TOCADO, or AGUA."
-    )
-    private String result;
+    private SpecialAbility specialAbility = SpecialAbility.NONE;
 }

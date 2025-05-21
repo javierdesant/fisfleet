@@ -16,7 +16,8 @@ CREATE TABLE usuarios
     username_hash  CHAR(64) UNIQUE NOT NULL,
     alias          VARCHAR(50)     NOT NULL,
     jugador_id     BIGINT UNIQUE REFERENCES jugador (id),
-    fecha_registro TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP
+    fecha_registro TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    tipo           VARCHAR(10) NOT NULL CHECK (tipo IN ('ALUMNO', 'PDI', 'PAS'))
 );
 
 CREATE TABLE maquina

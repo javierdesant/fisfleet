@@ -21,7 +21,7 @@ public class MoveEntity implements Serializable, IMovimiento {
     @MapsId("gameId")
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "partida_id", nullable = false)
-    private GameEntity game;
+    private GameResultEntity game;
 
     @MapsId("playerId")
     @ManyToOne(fetch = FetchType.LAZY, optional = false)

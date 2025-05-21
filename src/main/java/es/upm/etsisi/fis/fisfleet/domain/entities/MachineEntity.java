@@ -6,28 +6,20 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-
-import java.io.Serializable;
+import lombok.experimental.SuperBuilder;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
+@EqualsAndHashCode(callSuper = true)
+@SuperBuilder
 @Entity
 @Table(name = "maquina")
-public class MachineEntity implements Serializable {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "maquina_id_gen")
-    @SequenceGenerator(name = "maquina_id_gen", sequenceName = "maquina_id_seq", allocationSize = 1)
-    @Column(name = "id", nullable = false)
-    private Long id;
-
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "jugador_id")
-    private PlayerEntity player;
+public class MachineEntity extends PlayerEntity {
 
     @Size(max = 50)
     @NotNull
@@ -44,4 +36,8 @@ public class MachineEntity implements Serializable {
     @Column(name = "dificultad", nullable = false, length = 20)
     private TDificultad difficulty;
 
+    @Override
+    public String getNombre() {
+        return this.getGeneratedName();
+    }
 }

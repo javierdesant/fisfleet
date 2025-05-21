@@ -1,8 +1,8 @@
 package es.upm.etsisi.fis.fisfleet.api.dto.requests;
 
 import es.upm.etsisi.fis.fisfleet.api.validation.NotInForbiddenUsernames;
+import es.upm.etsisi.fis.fisfleet.api.validation.ValidUPMEmail;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -16,8 +16,9 @@ import lombok.NoArgsConstructor;
 @Builder
 public class UserRequest {
 
-    @NotBlank(message = "The usernameHash cannot be empty, blank, or null.")
-    private String usernameHash;
+    @NotBlank(message = "The username cannot be empty, blank, or null.")
+    @ValidUPMEmail
+    private String username;
 
     @NotBlank(message = "The alias cannot be empty, blank, or null.")
     @Size(min = 3, max = 10, message = "Alias length must be between 3 and 10 characters.")
@@ -28,6 +29,6 @@ public class UserRequest {
     @NotInForbiddenUsernames
     private String alias;
 
-    @NotNull(message = "The playerId cannot be empty.")     // FIXME ?
-    private Long playerId;
+    @NotBlank(message = "The password cannot be empty.")
+    private String password;
 }

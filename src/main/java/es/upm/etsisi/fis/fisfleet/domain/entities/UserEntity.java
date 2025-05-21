@@ -1,13 +1,15 @@
 package es.upm.etsisi.fis.fisfleet.domain.entities;
 
-import es.upm.etsisi.fis.fisfleet.utils.RolePermission;
+import es.upm.etsisi.fis.fisfleet.utils.Role;
 import es.upm.etsisi.fis.fisfleet.utils.RoleMapper;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.ColumnDefault;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -18,20 +20,16 @@ import java.io.Serializable;
 import java.time.Instant;
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
+@EqualsAndHashCode(callSuper = true)
+@SuperBuilder
 @Entity
 @Table(name = "usuarios")
-public class UserEntity implements UserDetails, Serializable {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "usuarios_id_gen")
-    @SequenceGenerator(name = "usuarios_id_gen", sequenceName = "usuarios_id_seq", allocationSize = 1)
-    @Column(name = "id", nullable = false)
-    private Long id;
+public class UserEntity extends PlayerEntity implements UserDetails, Serializable {
 
     @Size(max = 64)
     @NotNull
@@ -43,10 +41,6 @@ public class UserEntity implements UserDetails, Serializable {
     @Column(name = "alias", nullable = false, length = 50)
     private String alias;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "jugador_id")
-    private PlayerEntity player;
-
     @NotNull
     @Column(name = "fecha_registro", nullable = false)
     @ColumnDefault("CURRENT_TIMESTAMP")
@@ -54,15 +48,22 @@ public class UserEntity implements UserDetails, Serializable {
 
     @NotNull
     @Enumerated(EnumType.STRING)
-    @Column(name = "upm_user", nullable = false, length = 20)
-    private UPMUsers upmUser;
+    @Column(name = "tipo", nullable = false, length = 10)
+    private UPMUsers UPMUserType;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        List<RolePermission> permissions = RoleMapper.getPermissionsForUser(this.upmUser);
-        return permissions.stream()
-                .map(permission -> new SimpleGrantedAuthority("ROLE_" + permission.name()))
-                .collect(Collectors.toList());
+        Role role = RoleMapper.getRoleForUPMUser(this.UPMUserType);
+
+        if (role == null) {
+            return List.of();
+        }
+
+        return Stream.concat(
+                role.getPermissions().stream()
+                        .map(permission -> new SimpleGrantedAuthority(permission.name())),
+                Stream.of(new SimpleGrantedAuthority("ROLE_" + role.name()))
+        ).toList();
     }
 
     /**
@@ -71,13 +72,16 @@ public class UserEntity implements UserDetails, Serializable {
      */
     @Override
     public String getPassword() {
-        // This may cause some trouble later
         return "{noop}none";
     }
 
     @Override
     public String getUsername() {
-        return this.usernameHash;
+        return this.getUsernameHash();
     }
 
+    @Override
+    public String getNombre() {
+        return this.getAlias();
+    }
 }
