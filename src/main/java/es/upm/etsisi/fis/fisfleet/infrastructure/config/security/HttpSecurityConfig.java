@@ -44,12 +44,11 @@ public class HttpSecurityConfig {
 
     private void configurePublicEndpoints(AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry authReqConfig) {
         // TODO: decide which public/auth methods are necessary
-        authReqConfig.requestMatchers(HttpMethod.POST, "/auth/authenticate").permitAll();
-        authReqConfig.requestMatchers(HttpMethod.GET, "/auth/validate-token").permitAll();  // TEST: is this a test?
-        authReqConfig.requestMatchers(HttpMethod.POST, "/api/users/register").hasAuthority(RolePermission.REGISTER.name());
-        authReqConfig.requestMatchers(HttpMethod.POST, "/api/users/login").hasAuthority(RolePermission.LOGIN.name());
+        authReqConfig.requestMatchers(HttpMethod.POST, "/api/auth/authenticate").permitAll();
+        authReqConfig.requestMatchers(HttpMethod.GET, "/api/auth/validate-token").permitAll();
+        authReqConfig.requestMatchers(HttpMethod.POST, "/api/users/register");
+        authReqConfig.requestMatchers(HttpMethod.POST, "/api/users/login");
     }
-
 
     private void configurePlayerEndpoints(AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry authReqConfig) {
         authReqConfig.requestMatchers(HttpMethod.GET, "/api/users/profile").authenticated();
