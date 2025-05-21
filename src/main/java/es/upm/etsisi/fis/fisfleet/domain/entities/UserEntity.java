@@ -42,8 +42,8 @@ public class UserEntity extends PlayerEntity implements UserDetails, Serializabl
     private String alias;
 
     @NotNull
-    @ColumnDefault("CURRENT_TIMESTAMP")
     @Column(name = "fecha_registro", nullable = false)
+    @ColumnDefault("CURRENT_TIMESTAMP")
     private Instant registrationDate;
 
     @NotNull
@@ -66,6 +66,10 @@ public class UserEntity extends PlayerEntity implements UserDetails, Serializabl
         ).toList();
     }
 
+    /**
+     * This system does not store or use passwords directly, as authentication
+     * is managed through the UPM's LDAP service.
+     */
     @Override
     public String getPassword() {
         return "{noop}none";
@@ -74,5 +78,10 @@ public class UserEntity extends PlayerEntity implements UserDetails, Serializabl
     @Override
     public String getUsername() {
         return this.getUsernameHash();
+    }
+
+    @Override
+    public String getNombre() {
+        return this.getAlias();
     }
 }

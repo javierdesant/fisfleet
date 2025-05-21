@@ -1,5 +1,6 @@
 package es.upm.etsisi.fis.fisfleet.domain.entities;
 
+import es.upm.etsisi.fis.model.TDificultad;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -8,6 +9,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -31,9 +34,10 @@ public class MachineEntity extends PlayerEntity {
     @NotNull
     @Enumerated(EnumType.STRING)
     @Column(name = "dificultad", nullable = false, length = 20)
-    private Difficulty difficulty;
+    private TDificultad difficulty;
 
-    public enum Difficulty {
-        FACIL, MEDIO, DIFICIL
+    @Override
+    public String getNombre() {
+        return this.getGeneratedName();
     }
 }

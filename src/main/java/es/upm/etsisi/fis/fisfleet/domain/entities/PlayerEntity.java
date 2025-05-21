@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -42,37 +43,40 @@ public abstract class PlayerEntity implements Serializable, IJugador {
     private Set<ScoreEntity> scores = new LinkedHashSet<>();
 
     @Override
-    public boolean aceptarAccionComplementaria(TBarcoAccionComplementaria tBarcoAccionComplementaria, int i) {
-        return false; // TODO
+    public boolean aceptarAccionComplementaria(TBarcoAccionComplementaria tBarcoAccionComplementaria, int cantidadDisponible) {
+        return cantidadDisponible>0;
     }
 
     @Override
     public int[] realizaTurno(char[][] chars) {
-        return new int[0]; // TODO
+        if (!moves.isEmpty()) {
+            MoveEntity move = moves.iterator().next();
+            return new int[] { move.getCoordinateX(), move.getCoordinateY() };
+        }
+        return new int[] { 0, 0 };
     }
 
     @Override
-    public void addMovimiento(IMovimiento iMovimiento) {
-        // TODO
+    public void addMovimiento(IMovimiento movIn) {
+        if (movIn instanceof MoveEntity) {
+            moves.add((MoveEntity) movIn);
+        }
     }
 
     @Override
-    public String getNombre() {
-        return ""; // TODO
-    }
-
-    @Override
-    public void addPuntuacion(IPuntuacion iPuntuacion) {
-        // TODO
+    public void addPuntuacion(IPuntuacion puntos) {
+        if (puntos instanceof ScoreEntity) {
+            scores.add((ScoreEntity) puntos);
+        }
     }
 
     @Override
     public List<IMovimiento> getMovimientos() {
-        return List.of(); // TODO
+        return new ArrayList<>(moves);
     }
 
     @Override
     public List<IPuntuacion> getPuntuaciones() {
-        return List.of(); // TODO
+        return new ArrayList<>(scores);
     }
 }
