@@ -2,6 +2,7 @@ package es.upm.etsisi.fis.fisfleet.infrastructure.controllers;
 
 import es.upm.etsisi.fis.fisfleet.api.dto.GameViewDTO;
 import es.upm.etsisi.fis.fisfleet.api.dto.requests.MoveRequest;
+import es.upm.etsisi.fis.fisfleet.infrastructure.cache.GameCacheService;
 import es.upm.etsisi.fis.fisfleet.infrastructure.services.GameService;
 import es.upm.etsisi.fis.model.TDificultad;
 import lombok.RequiredArgsConstructor;
@@ -17,9 +18,9 @@ import java.security.Principal;
 @RequiredArgsConstructor
 public class GameWebSocketController {
 
-
     private final GameService gameService;
-//    private final SimpMessagingTemplate messagingTemplate; needed?
+    private final GameCacheService gameCacheService;
+//    private final SimpMessagingTemplate messagingTemplate;
 
 
     @MessageMapping("/game/new/pve")
