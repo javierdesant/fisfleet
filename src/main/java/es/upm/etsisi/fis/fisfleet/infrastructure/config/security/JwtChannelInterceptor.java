@@ -34,23 +34,27 @@ public class JwtChannelInterceptor implements ChannelInterceptor {
         StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
 
         if (this.isInitialConnectCommand(accessor)) {
-            String token;
-            try {
-                token = this.extractTokenFromHeaders(accessor);
-                if (token == null) {
-                    log.warn("JWT token not found in WebSocket connection");
-                    throw new SecurityException("JWT Token is missing in WebSocket handshake");
-                }
-                this.authenticateUserWithToken(token, accessor);
-            } catch (SecurityException ex) {
-                log.error("Security exception during WebSocket handshake: {}", ex.getMessage());
-                throw ex;
-            } catch (Exception ex) {
-                log.error("Unexpected error during WebSocket handshake: {}", ex.getMessage(), ex);
-                throw new RuntimeException("Unexpected error during WebSocket handshake", ex);
-            }
+            this.validateAndAuthenticateToken(accessor);
         }
         return message;
+    }
+
+    private void validateAndAuthenticateToken(StompHeaderAccessor accessor) {
+        String token;
+        try {
+            token = this.extractTokenFromHeaders(accessor);
+            if (token == null) {
+                log.warn("JWT token not found in WebSocket connection");
+                throw new SecurityException("JWT Token is missing in WebSocket handshake");
+            }
+            this.authenticateUserWithToken(token, accessor);
+        } catch (SecurityException ex) {
+            log.error("Security exception during WebSocket handshake: {}", ex.getMessage());
+            throw ex;
+        } catch (Exception ex) {
+            log.error("Unexpected error during WebSocket handshake: {}", ex.getMessage(), ex);
+            throw new RuntimeException("Unexpected error during WebSocket handshake", ex);
+        }
     }
 
     private boolean isInitialConnectCommand(StompHeaderAccessor accessor) {
@@ -88,7 +92,7 @@ public class JwtChannelInterceptor implements ChannelInterceptor {
 
             UserDetails userDetails = userDetailsService.loadUserByUsername(username);
             if (jwtService.validateToken(token)) {
-                setAuthenticationContext(accessor, userDetails, username);
+                this.setAuthenticationContext(accessor, userDetails, username);
             } else {
                 log.warn("Invalid token provided for username: {}", username);
                 throw new SecurityException("JWT Token is invalid");
