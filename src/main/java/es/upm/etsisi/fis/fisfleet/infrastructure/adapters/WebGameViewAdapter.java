@@ -17,13 +17,16 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+
+// TODO important class!
+
+
 @Component
 @Slf4j
-public class WebGameViewController extends VistaControladoraPartida {
+public class WebGameViewAdapter extends VistaControladoraPartida {
 
     private final GameStateMapper gameStateMapper;
     private final SimpMessagingTemplate messagingTemplate;
-//    private final RequestResponseCacheService requestResponseCacheService;
 
     // Default game ID for when a specific game is not set
     private String currentGameId = "default";
@@ -32,24 +35,12 @@ public class WebGameViewController extends VistaControladoraPartida {
     // FIXME!: messaging template and caches issues
 
     @Autowired
-    public WebGameViewController(GameStateMapper gameStateMapper,
-                                 SimpMessagingTemplate messagingTemplate,
-                                 RequestResponseCacheService requestResponseCacheService) {
+    public WebGameViewAdapter(GameStateMapper gameStateMapper,
+                              SimpMessagingTemplate messagingTemplate,
+                              RequestResponseCacheService requestResponseCacheService) {
         super(null);
         this.gameStateMapper = gameStateMapper;
         this.messagingTemplate = messagingTemplate;
-    }
-
-    /**
-     * Sets the current game ID for WebSocket communications
-     *
-     * @param gameId The game ID to set
-     */
-    public void setCurrentGameId(String gameId) {
-        if (gameId != null && !gameId.isBlank()) {
-            this.currentGameId = gameId;
-            log.debug("Current game ID set to: {}", gameId);
-        }
     }
 
     @Override
