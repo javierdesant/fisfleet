@@ -15,12 +15,6 @@ import lombok.NoArgsConstructor;
 @Builder
 public class MoveRequest {
 
-    @NotNull(message = "The gameId cannot be empty.")
-    private Long gameId;
-
-    @NotNull(message = "The playerId cannot be empty.")
-    private Long playerId;
-
     @NotNull(message = "The X coordinate cannot be empty.")
     @Min(value = 0, message = "The X coordinate cannot be less than 0.")
     @Max(value = 9, message = "The X coordinate cannot be greater than 9.")
