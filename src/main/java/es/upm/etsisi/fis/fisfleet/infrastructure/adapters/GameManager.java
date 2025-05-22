@@ -5,10 +5,11 @@ import es.upm.etsisi.fis.model.*;
 import org.springframework.stereotype.Component;
 
 @Component
-public class GameController {
+public class GameManager {
     private final ControladorPartida controladorPartida;
+//  TODO  private final WebGameViewAdapter webGameViewAdapter;
 
-    public GameController(WebGameViewController vistaWeb) {
+    public GameManager(WebGameViewAdapter vistaWeb) {
         this.controladorPartida = ControladorPartida.getInstance(null);
         this.controladorPartida.setGui(vistaWeb);
     }
@@ -41,7 +42,7 @@ public class GameController {
         this.controladorPartida.mostrar(partidaActual, patrullero);
     }
 
-    public void setGui(WebGameViewController gui) {
+    public void setGui(WebGameViewAdapter gui) {
         this.controladorPartida.setGui(gui);
     }
 
