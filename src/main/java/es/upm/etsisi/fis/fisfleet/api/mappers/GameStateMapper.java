@@ -11,7 +11,7 @@ public interface GameStateMapper {
 
     @Mapping(source = "turnoName", target = "player1Id", qualifiedByName = "stringToLongOrNull")
     @Mapping(source = "turnoOpuestoName", target = "player2Id", qualifiedByName = "stringToLongOrNull")
-    @Mapping(source = "turnoName", target = "currentTurn")
+    @Mapping(source = "turnoName", target = "turnOfPlayer")
     @Mapping(expression = "java(match.getTableros().get(0))", target = "player1Board")
     @Mapping(expression = "java(match.getTableros().get(1))", target = "player2Board")
     GameStateDTO mapToGameStateDTO(IPartida match);
