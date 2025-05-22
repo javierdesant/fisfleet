@@ -53,13 +53,20 @@ public abstract class PlayerEntity implements Serializable, IJugador {
         return cantidadDisponible>0;
     }
 
+    @Builder.Default
+    @Transient
+    private int moveIndex = 0;
+
     @Override
     public int[] realizaTurno(char[][] chars) {
-        if (!moves.isEmpty()) {
-            MoveEntity move = moves.iterator().next();
+        List<MoveEntity> orderedMoves = this.getMoves().stream().toList();
+
+        if (moveIndex < orderedMoves.size()) {
+            MoveEntity move = orderedMoves.get(moveIndex++);
             return new int[] { move.getCoordinateX(), move.getCoordinateY() };
         }
-        return new int[] { 0, 0 };
+
+        return new int[]{-1, -1};
     }
 
     @Override
