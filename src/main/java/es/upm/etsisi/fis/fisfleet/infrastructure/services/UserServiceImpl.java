@@ -4,16 +4,17 @@ import es.upm.etsisi.fis.fisfleet.api.dto.requests.UserRequest;
 import es.upm.etsisi.fis.fisfleet.domain.entities.UserEntity;
 import es.upm.etsisi.fis.fisfleet.domain.repositories.UserRepository;
 import es.upm.etsisi.fis.fisfleet.infrastructure.config.security.LDAPAuthenticator;
+import es.upm.etsisi.fis.fisfleet.utils.RolePermission;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 import servidor.ObtencionDeRol;
 import servidor.UPMUsers;
 
 import java.time.Instant;
-import java.util.HashSet;
 
 @Transactional
 @Slf4j
@@ -41,12 +42,9 @@ public class UserServiceImpl implements UserService {
                 .alias(request.getAlias())
                 .registrationDate(Instant.now())
                 .UPMUserType(UPMUsers.ALUMNO)
-                .moves(new HashSet<>())
-                .scores(new HashSet<>())
-                .gamesAsPlayer1(new HashSet<>())
-                .gamesAsPlayer2(new HashSet<>())
-                .gamesWon(new HashSet<>())
                 .build();
+
+        assert newUser.getAuthorities().contains(new SimpleGrantedAuthority(RolePermission.REGISTER.name()));
 
         return userRepository.save(newUser);
     }
