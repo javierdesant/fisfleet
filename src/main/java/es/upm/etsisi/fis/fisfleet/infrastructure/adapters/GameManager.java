@@ -9,7 +9,7 @@ public class GameManager {
     private final ControladorPartida controladorPartida;
 //  TODO  private final WebGameViewAdapter webGameViewAdapter;
 
-    public GameManager(WebGameViewAdapter vistaWeb) {
+    public GameManager(VistaControladoraPartidaExt vistaWeb) {
         this.controladorPartida = ControladorPartida.getInstance(null);
         this.controladorPartida.setGui(vistaWeb);
     }
@@ -42,7 +42,7 @@ public class GameManager {
         this.controladorPartida.mostrar(partidaActual, patrullero);
     }
 
-    public void setGui(WebGameViewAdapter gui) {
+    public void setGui(VistaControladoraPartidaExt gui) {
         this.controladorPartida.setGui(gui);
     }
 
