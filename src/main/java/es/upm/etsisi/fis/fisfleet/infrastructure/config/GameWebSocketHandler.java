@@ -1,9 +1,7 @@
 package es.upm.etsisi.fis.fisfleet.infrastructure.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import es.upm.etsisi.fis.fisfleet.api.dto.GameStateDTO;
 import es.upm.etsisi.fis.fisfleet.api.dto.GameViewDTO;
-import es.upm.etsisi.fis.fisfleet.api.dto.SpecialAbility;
 import es.upm.etsisi.fis.fisfleet.api.dto.requests.MoveRequest;
 import es.upm.etsisi.fis.fisfleet.domain.entities.UserEntity;
 import es.upm.etsisi.fis.fisfleet.infrastructure.cache.GameCacheService;
@@ -60,21 +58,16 @@ public class GameWebSocketHandler extends TextWebSocketHandler {
     public void handleTextMessage(@NonNull WebSocketSession session, @NonNull TextMessage message) throws Exception {
         try {
             MoveRequest request = objectMapper.readValue(message.getPayload(), MoveRequest.class);
-            Long gameId = request.getGameId();
-            Long playerId = request.getPlayerId();
 
-//            TODO!: remove gameId and playerId from moveId and get it from context
-//             if (gameId == null || playerId == null) {
-//                 this.sendErrorMessage(session, "Game ID and player ID are required");
-//                 return;
-//             }
+            UserDetails loggedInUser = authenticationService.findLoggedInUser();
+            assert loggedInUser.getUsername() != null;
 
-            if (!gameService.canPlayerPerformAction(gameId, playerId)) {
-                this.sendErrorMessage(session, "It's not your turn or you're not part of this game");
-                return;
+            if (loggedInUser.equals(session.getPrincipal())) {
+                this.processMoveRequest(session, request);
+            } else {
+                throw new SecurityException("User is not in the game or session does not belong to the logged-in user.");
             }
 
-            this.processMoveRequest(session, request, gameId, playerId);
         } catch (Exception e) {
             log.error("Error processing message", e);
             this.sendErrorMessage(session, "Error processing your request: " + e.getMessage());
@@ -82,25 +75,23 @@ public class GameWebSocketHandler extends TextWebSocketHandler {
     }
 
 
-    private void processMoveRequest(WebSocketSession session, MoveRequest request, Long gameId, Long playerId) {
+    private void processMoveRequest(WebSocketSession session, MoveRequest request) {
         if (!gameService.validateMove(request)) {
             this.sendErrorMessage(session, "Invalid move. Please check the game rules and try again.");
-            return;
         }
 
-        GameStateDTO updatedState = switch (request.getSpecialAbility()) {
-            case COUNTER_ATTACK -> gameService.performCounterAttack(request);
-            case ARTILLERY_ATTACK -> gameService.launchArtilleryAttack(request);
-            case REPAIR -> gameService.repairSubmarine(request.getGameId(), request.getPlayerId());
-            case REVEAL_ROW ->
-                    gameService.revealRow(request.getGameId(), request.getPlayerId(), request.getCoordinateY());
-            case NONE -> gameService.performAttack(request);
-        };
-
-        this.sendGameViewToPlayer(updatedState.getPlayer1Id(), gameId);
-        this.sendGameViewToPlayer(updatedState.getPlayer2Id(), gameId);
-
-        log.debug("Processed move for game: {} by player: {}", gameId, playerId);
+//       TODO!: implement a Partida.class cache in GameCacheService
+//        GameStateDTO updatedState = switch (request.getSpecialAbility()) {
+//            case COUNTER_ATTACK -> gameService.performCounterAttack(request);
+//            case ARTILLERY_ATTACK -> gameService.launchArtilleryAttack(request);
+//            case REPAIR -> gameService.repairSubmarine(request.getGameId(), request.getPlayerId());
+//            case REVEAL_ROW ->
+//                    gameService.revealRow(request.getGameId(), request.getPlayerId(), request.getCoordinateY());
+//            case NONE -> gameService.performAttack(request);
+//        };
+//        this.sendGameViewToPlayer(updatedState.getPlayer1Id(), gameId);
+//        this.sendGameViewToPlayer(updatedState.getPlayer2Id(), gameId);
+//        log.debug("Processed move for game: {} by player: {}", gameId, playerId);
     }
 
     @Override
@@ -165,7 +156,7 @@ public class GameWebSocketHandler extends TextWebSocketHandler {
             try {
                 session.close(CloseStatus.SERVER_ERROR);
             } catch (IOException ex) {
-                log.warn("Failed to close session {} after transport error: {}", session.getId(), ex.getMessage());
+                log.error("Failed to close session {} after transport error: {}", session.getId(), ex.getMessage(), ex);
             }
         }
 
