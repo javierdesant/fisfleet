@@ -13,15 +13,13 @@ public enum Role {
             RolePermission.VIEW_ALL_SCORES,
             RolePermission.MANAGE_USERS,
             RolePermission.CONFIGURE_SYSTEM,
-            RolePermission.ACCESS_ADMIN_PANEL,
-            RolePermission.LOGIN
+            RolePermission.ACCESS_ADMIN_PANEL
     )),
 
     ALUMNO(List.of(
             RolePermission.PLAY_GAME,
             RolePermission.VIEW_SCOREBOARD,
-            RolePermission.REGISTER,
-            RolePermission.LOGIN
+            RolePermission.REGISTER
     ));
 
     private final List<RolePermission> permissions;
