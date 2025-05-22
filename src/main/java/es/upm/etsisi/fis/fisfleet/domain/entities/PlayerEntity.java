@@ -5,6 +5,7 @@ import es.upm.etsisi.fis.model.IMovimiento;
 import es.upm.etsisi.fis.model.IPuntuacion;
 import es.upm.etsisi.fis.model.TBarcoAccionComplementaria;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
@@ -27,18 +28,23 @@ public abstract class PlayerEntity implements Serializable, IJugador {
     @Column(name = "id", nullable = false)
     private Long id;
 
+    @Builder.Default
     @OneToMany(mappedBy = "player")
     private Set<MoveEntity> moves = new LinkedHashSet<>();
 
+    @Builder.Default
     @OneToMany(mappedBy = "player1")
     private Set<GameResultEntity> gamesAsPlayer1 = new LinkedHashSet<>();
 
+    @Builder.Default
     @OneToMany(mappedBy = "player2")
     private Set<GameResultEntity> gamesAsPlayer2 = new LinkedHashSet<>();
 
+    @Builder.Default
     @OneToMany(mappedBy = "winner")
     private Set<GameResultEntity> gamesWon = new LinkedHashSet<>();
 
+    @Builder.Default
     @OneToMany(mappedBy = "player")
     private Set<ScoreEntity> scores = new LinkedHashSet<>();
 

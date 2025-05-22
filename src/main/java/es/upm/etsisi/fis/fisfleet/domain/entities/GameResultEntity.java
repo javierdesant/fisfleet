@@ -48,6 +48,7 @@ public class GameResultEntity implements Serializable {
     @JoinColumn(name = "ganador_id", nullable = false)
     private PlayerEntity winner;
 
+    @Builder.Default
     @OneToMany(mappedBy = "game")
     private Set<MoveEntity> moves = new LinkedHashSet<>();
 }

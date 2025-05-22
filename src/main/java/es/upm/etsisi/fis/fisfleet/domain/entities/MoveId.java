@@ -38,10 +38,10 @@ public class MoveId implements Serializable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
-        MoveId entity = (MoveId) o;
-        return Objects.equals(this.playerId, entity.playerId) &&
-                Objects.equals(this.date, entity.date) &&
-                Objects.equals(this.gameId, entity.gameId);
+        MoveId that = (MoveId) o;
+        return Objects.equals(this.playerId, that.playerId) &&
+                Objects.equals(this.date, that.date) &&
+                Objects.equals(this.gameId, that.gameId);
     }
 
     @Override

@@ -32,9 +32,9 @@ public class ScoreId implements Serializable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
-        ScoreId entity = (ScoreId) o;
-        return Objects.equals(this.playerId, entity.playerId) &&
-                Objects.equals(this.gameId, entity.gameId);
+        ScoreId that = (ScoreId) o;
+        return Objects.equals(this.playerId, that.playerId) &&
+                Objects.equals(this.gameId, that.gameId);
     }
 
     @Override

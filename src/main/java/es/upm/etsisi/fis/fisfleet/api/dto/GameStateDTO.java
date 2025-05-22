@@ -41,5 +41,6 @@ public class GameStateDTO implements Serializable {
     @Max(value = 2, message = "Current turn must be either 1 or 2.")
     private int turnOfPlayer;
 
+    @Builder.Default
     private SpecialAbility canUseAbility = SpecialAbility.NONE;
 }

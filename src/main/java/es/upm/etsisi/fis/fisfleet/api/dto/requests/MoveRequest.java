@@ -31,6 +31,7 @@ public class MoveRequest {
     @Max(value = 9, message = "The Y coordinate cannot be greater than 9.")
     private Integer coordinateY;
 
+    @Builder.Default
     @NotNull(message = "The special ability enum cannot be empty.")
     private SpecialAbility specialAbility = SpecialAbility.NONE;
 }
