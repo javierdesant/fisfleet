@@ -21,22 +21,23 @@ El desarrollo de Battleship permite que los estudiantes practiquen y apliquen lo
 ## 🛠️ Características del Juego
 
 **Battleship UPM** trae una versión renovada y desafiante:
+
 1. **Tablero estándar 10x10**, denotado con filas y columnas numeradas de 0 a 9.
 2. **Flotas únicas con habilidades especiales**:
-  - **Portaviones (4 casillas)**: Contrataca automáticamente con cada impacto recibido.
-  - **Acorazado (3 casillas)**: Puede ejecutar ataques de artillería que afecten su posición y adyacentes.
-  - **Submarino (3 casillas)**: Repara y resucita una vez durante la partida.
-  - **Patrullero (2 casillas)**: Revela toda una fila como habilidad especial.
+    - **Portaviones (4 casillas)**: Contrataca automáticamente con cada impacto recibido.
+    - **Acorazado (3 casillas)**: Puede ejecutar ataques de artillería que afecten su posición y adyacentes.
+    - **Submarino (3 casillas)**: Repara y resucita una vez durante la partida.
+    - **Patrullero (2 casillas)**: Revela toda una fila como habilidad especial.
 3. **Puntuación de Partida**:
-  - 5 puntos por cada posición de barco enemigo hundida.
-  - 2 puntos por cada posición impactada y no hundida.
-  - Penalización de -1 por impacto en agua.
-  - Bonus/malus de 20 puntos al ganador o perdedor.
+    - 5 puntos por cada posición de barco enemigo hundida.
+    - 2 puntos por cada posición impactada y no hundida.
+    - Penalización de -1 por impacto en agua.
+    - Bonus/malus de 20 puntos al ganador o perdedor.
 4. **Soporte para Usuarios**:
-  - Registro y almacenamiento de jugadores humanos (integración con el **LDAP de la UPM** para validación).
-  - Contraseñas y datos almacenados bajo cifrado y con cumplimiento de la **LOPD-GDD**.
-  - Soporte para jugar contra la máquina con niveles de dificultad (*Fácil, Normal y Difícil*).
-  - Rastreabilidad de estadísticas: Ranking de las 10 mejores puntuaciones de partidas.
+    - Registro y almacenamiento de jugadores humanos (integración con el **LDAP de la UPM** para validación).
+    - Contraseñas y datos almacenados bajo cifrado y con cumplimiento de la **LOPD-GDD**.
+    - Soporte para jugar contra la máquina con niveles de dificultad (*Fácil, Normal y Difícil*).
+    - Rastreabilidad de estadísticas: Ranking de las 10 mejores puntuaciones de partidas.
 
 ---
 
@@ -53,64 +54,167 @@ El software está diseñado para ser **inclusivo, accesible y multiplataforma**,
 
 ## 📂 Estructura del Proyecto
 
-El proyecto está organizado en las siguientes áreas principales:
-
 ```plaintext
-Battleship-UPM/
-├── 📁 src/                    # Código fuente
-│   ├── 📁 main/
-│   │   ├── 📁 java/           # Lógica del juego, controladores y servicios
-│   │   └── 📁 resources/      # Plantillas, configuración y textos
-│   ├── 📁 test/               # Pruebas automáticas y validaciones
-├── 📁 docs/                   # Documentación (requisitos, diseño, análisis)
-├── 📄 docker-compose.yml      # Configuración Docker Compose para servicios
-├── 📄 Dockerfile              # Configuración Docker para contenedor de la app
-├── 📄 pom.xml                 # Dependencias y configuración Maven
-└── 📄 README.md               # Documentación del proyecto
+fisfleet/
+├── docs/                        # Documentación del proyecto (UML, requisitos, etc.)
+│   └── uml/
+├── frontend/                    # Código fuente del frontend (React)
+│   ├── app/
+│   │   ├── assets/images/       # Imágenes usadas en la UI
+│   │   └── routes/              # Rutas de React Router
+│   │       ├── _landing/       # Página principal
+│   │       ├── _landing._index/
+│   │       ├── _auth.login/
+│   │       │   └── icons/
+│   │       ├── _auth.register/
+│   │       ├── _auth.profile/
+│   │       ├── admin/
+│   │       ├── match_.$id/
+│   │       └── match_.$id._index/
+│   │           └── icons/
+│   ├── design/                 # Recursos de diseño (colores, estilos, etc.)
+│   └── public/                 # Archivos estáticos (favicon, imágenes públicas)
+├── libs/                       # Librerías externas en formato JAR
+│   └── etsisi/
+│       ├── Battleship/1.11/
+│       └── externals/5.1/
+├── src/                        # Código fuente del backend (Spring Boot)
+│   ├── main/
+│   │   ├── java/es/upm/etsisi/fis/fisfleet/
+│   │   │   ├── api/            # DTOs, mappers, validaciones
+│   │   │   ├── domain/         # Entidades y repositorios
+│   │   │   ├── infrastructure/ # Adaptadores, configuración, servicios
+│   │   │   └── utils/          # Utilidades generales
+│   │   └── resources/db/       # Scripts de base de datos
+│   └── test/                   # Tests automatizados del backend
+├── target/                     # Directorio de build de Maven (ignorado en git)
+├── TODO/                       # Gestión de tareas y notas internas
+├── .env                        # Variables de entorno
+├── .gitignore                  # Exclusiones de archivos en Git
+├── Dockerfile                  # Imagen Docker del proyecto
+├── docker-compose.yml          # Orquestación de servicios
+├── mvnw, mvnw.cmd              # Wrappers de Maven
+├── pom.xml                     # Configuración Maven del backend
+├── package.json                # Dependencias del frontend
+├── package-lock.json           # Lockfile de npm
+├── tsconfig.json               # Configuración TypeScript
+├── vite.config.ts              # Configuración Vite
+├── LICENSE                     # Licencia del proyecto
+└── README.md                   # Este archivo
+```
+
+> **Nota:** El frontend y backend comparten el mismo repositorio, pero cada uno tiene su propia configuración y
+> dependencias.
+
+---
+
+## ⚙️ Configuración y Ejecución
+
+### 1️⃣ Clona el repositorio
+
+```bash
+git clone https://gitlab.etsisi.upm.es/bu0211/battleship_citim21_02.git
+cd fisfleet
+```
+
+### 2️⃣ Configura variables de entorno
+
+Copia el archivo de ejemplo y edítalo según tu entorno:
+
+```bash
+cp .env.example .env
+```
+
+*Edita .env con tus credenciales y configuración preferida*
+
+> **Nota:** Únicamente el backend requiere de un fichero `.env` en este proyecto.
+
+---
+
+### 3️⃣ Instalación de dependencias
+
+#### Backend (Java/Spring)
+
+```bash
+cd backend
+mvn clean install
+```
+
+#### Frontend (React)
+
+```bash
+cd ../frontend
+npm install
 ```
 
 ---
 
-## ⚙️ Configuración del Entorno
+### 4️⃣ Desarrollo y ejecución local
 
-### 1️⃣ Clona el repositorio
+#### Backend
+
 ```bash
-git clone <url_del_repositorio>
-cd Battleship-UPM
+cd backend
+mvn spring-boot:run
 ```
 
-### 2️⃣ Construcción con Maven
+#### Frontend
+
 ```bash
-mvn clean install
+cd ../frontend
+npm run dev
 ```
 
-> Si usas el wrapper de Maven: `./mvnw clean install`
+Esto arrancará el servidor de desarrollo de React Router con recarga en caliente y generación de tipos para rutas.
 
-### 3️⃣ Ejecuta con Docker Compose
+---
+
+### 5️⃣ Pruebas
+
+#### Backend
+
+```bash
+cd backend
+mvn test
+```
+
+#### Frontend
+
+```bash
+cd ../frontend
+npm run typecheck
+```
+
+---
+
+### 6️⃣ Ejecución con Docker Compose
+
+Desde la raíz del proyecto:
+
 ```bash
 docker-compose up --build
 ```
 
-> Este comando levanta el backend del juego, junto con la base de datos y otros servicios requeridos.
+Esto levantará todos los servicios necesarios (backend, frontend, base de datos, etc.).
 
 ---
 
-## 🧪 Pruebas
+### 7️⃣ Acceso a la aplicación
 
-Puedes ejecutar las pruebas automatizadas para verificar el comportamiento del sistema:
-```bash
-mvn test
-```
+- **Frontend:** [http://localhost:5173](http://localhost:5173) (modo desarrollo)
+- **Backend:** [http://localhost:8080](http://localhost:8080)
+- **Producción (Docker):** Consulta los puertos expuestos en `docker-compose.yml`.
 
 ---
 
 ## 🕹️ Cómo Jugar
 
-1. Accede a la aplicación en [http://localhost:8080](http://localhost:8080).
+1. Accede a la aplicación en [http://localhost:8080](http://localhost:8080)
+   o [http://localhost:5173](http://localhost:5173) según el entorno.
 2. **Regístrate** con un correo válido de la **UPM** utilizando las credenciales LDAP.
 3. Configura tu partida:
-  - Juega contra una **máquina** con diferentes niveles de dificultad.
-  - Guarda las estadísticas de cada partida, consulta el ranking y mejora tu habilidad.
+    - Juega contra una **máquina** con diferentes niveles de dificultad.
+    - Guarda las estadísticas de cada partida, consulta el ranking y mejora tu habilidad.
 4. ¡Disfruta de las nuevas mecánicas como las habilidades especiales de las flotas! 🚢
 
 ---
@@ -124,7 +228,7 @@ mvn test
   - Contenerización con Docker y orquestación con Docker Compose.
   - Integración con bases de datos relacionales como PostgreSQL/MySQL.
 - **Frontend**:
-  - HTML5, CSS3 y diseño responsivo compatible con dispositivos modernos.
+    - React, React Router, TailwindCSS, HTML5, CSS3 y diseño responsivo compatible con dispositivos modernos.
 - **Testeo y Validación**:
   - JUnit, Mockito y otras herramientas de pruebas.
 
@@ -140,9 +244,34 @@ El mantenimiento y la evolución del juego están previstos durante los **próxi
 
 ---
 
+## 👨‍💻 Desarrolladores
+
+Proyecto realizado por el equipo de la **Universidad Politécnica de Madrid**:
+
+- **Raúl Gonzalo Toapanta**  
+  [gonzalo.tpaucar@alumnos.upm.es](mailto:gonzalo.tpaucar@alumnos.upm.es)
+- **Javier de Santiago Soto**  
+  [javier.desantiago@alumnos.upm.es](mailto:javier.desantiago@alumnos.upm.es)
+- **Araceli Argandoña Macollunco**  
+  [a.argandona@alumnos.upm.es](mailto:a.argandona@alumnos.upm.es)
+- **Daniel Rodríguez de Nobrega**  
+  [daniel.rdenobrega@alumnos.upm.es](mailto:daniel.rdenobrega@alumnos.upm.es)
+- **Estefanía Piccetti**  
+  [estefania.piccetti@alumnos.upm.es](mailto:estefania.piccetti@alumnos.upm.es)
+
+---
+
+## 👨‍🏫 Profesores
+
+- Andrea Cimmino
+- Carlos Badenes
+
+---
+
 ## 🌟 Licencia
 
-Este proyecto cumple con la **LOPD-GDD** y se rige bajo la [Licencia MIT](LICENSE). Los datos de los jugadores serán usados exclusivamente con fines relacionados al juego.
+Este proyecto cumple con la **LOPD-GDD** y se rige bajo la [Licencia MIT](LICENSE). Los datos de los jugadores serán
+usados exclusivamente con fines relacionados con el juego.
 
 ---
 
@@ -155,4 +284,5 @@ El proyecto se gestionará y entregará a través de **Redmine**, **Gitlab**, y 
 
 ---
 
-¡Diviértete hundiendo flotas y creando software de calidad!
+> “El viento y las olas siempre están del lado del navegante más hábil.”  
+> *Edmund Gibbon*

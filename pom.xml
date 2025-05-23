@@ -35,7 +35,11 @@
 			<name>Daniel Rodríguez de Nobrega</name>
 			<email>daniel.rdenobrega@alumnos.upm.es</email>
 		</developer>
-		<!--TODO: add Estefanía-->
+		<developer>
+			<id>estefania.piccetti</id>
+			<name>Estefanía Piccetti</name>
+			<email>estefania.piccetti@alumnos.upm.es</email>
+		</developer>
 	</developers>
 
 	<properties>
