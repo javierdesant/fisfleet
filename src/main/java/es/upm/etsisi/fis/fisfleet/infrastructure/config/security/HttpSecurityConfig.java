@@ -46,8 +46,8 @@ public class HttpSecurityConfig {
         // TODO: decide which public/auth methods are necessary
         authReqConfig.requestMatchers(HttpMethod.POST, "/api/auth/authenticate").permitAll();
         authReqConfig.requestMatchers(HttpMethod.GET, "/api/auth/validate-token").permitAll();
-        authReqConfig.requestMatchers(HttpMethod.POST, "/api/users/register");
-        authReqConfig.requestMatchers(HttpMethod.POST, "/api/users/login");
+        authReqConfig.requestMatchers(HttpMethod.POST, "/api/users").permitAll();
+        authReqConfig.requestMatchers(HttpMethod.POST, "/api/users/login").permitAll();
     }
 
     private void configurePlayerEndpoints(AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry authReqConfig) {
