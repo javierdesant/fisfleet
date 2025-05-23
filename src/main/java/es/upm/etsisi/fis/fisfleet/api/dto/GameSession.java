@@ -16,7 +16,7 @@ import java.time.Instant;
 @AllArgsConstructor
 @Data
 @Builder
-public class GameStateDTO implements Serializable {
+public class GameSession implements Serializable {
     @NotNull(message = "GameId cannot be empty.")
     private Long gameId;
 

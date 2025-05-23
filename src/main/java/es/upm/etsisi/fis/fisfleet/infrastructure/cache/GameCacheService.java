@@ -1,6 +1,6 @@
 package es.upm.etsisi.fis.fisfleet.infrastructure.cache;
 
-import es.upm.etsisi.fis.fisfleet.api.dto.GameStateDTO;
+import es.upm.etsisi.fis.fisfleet.api.dto.GameSession;
 import es.upm.etsisi.fis.fisfleet.api.dto.GameViewDTO;
 
 import java.util.List;
@@ -8,9 +8,9 @@ import java.util.Optional;
 
 public interface GameCacheService {
 
-    void saveGameState(GameStateDTO gameState);
+    void saveGameState(GameSession gameState);
 
-    Optional<GameStateDTO> getGameState(Long gameId);
+    Optional<GameSession> getGameState(Long gameId);
 
     void removeGameState(Long gameId);
 

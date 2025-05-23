@@ -1,7 +1,7 @@
 package es.upm.etsisi.fis.fisfleet.infrastructure.cache;
 
 import com.github.benmanes.caffeine.cache.Cache;
-import es.upm.etsisi.fis.fisfleet.api.dto.GameStateDTO;
+import es.upm.etsisi.fis.fisfleet.api.dto.GameSession;
 import es.upm.etsisi.fis.fisfleet.api.dto.GameViewDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,13 +16,13 @@ import java.util.Optional;
 @Slf4j
 public class GameCacheServiceImpl implements GameCacheService {
 
-    private final Cache<Long, GameStateDTO> gameStateCache;
+    private final Cache<Long, GameSession> gameStateCache;
     private final Cache<Long, List<Long>> playerGamesCache;
     private final Cache<String, GameViewDTO> playerViewsCache;
     private final Cache<Long, String> activeSessionsCache;
 
     @Override
-    public void saveGameState(GameStateDTO gameState) {
+    public void saveGameState(GameSession gameState) {
         if (gameState == null || gameState.getGameId() == null) {
             log.warn("Attempted to cache null game state or game state with null ID");
             return;
@@ -32,7 +32,7 @@ public class GameCacheServiceImpl implements GameCacheService {
     }
 
     @Override
-    public Optional<GameStateDTO> getGameState(Long gameId) {
+    public Optional<GameSession> getGameState(Long gameId) {
         if (gameId == null) {
             log.warn("Attempted to retrieve game state with null ID");
             return Optional.empty();

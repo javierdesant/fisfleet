@@ -1,6 +1,6 @@
 package es.upm.etsisi.fis.fisfleet.infrastructure.services;
 
-import es.upm.etsisi.fis.fisfleet.api.dto.GameStateDTO;
+import es.upm.etsisi.fis.fisfleet.api.dto.GameSession;
 import es.upm.etsisi.fis.fisfleet.api.dto.GameViewDTO;
 import es.upm.etsisi.fis.fisfleet.api.dto.requests.MoveRequest;
 import es.upm.etsisi.fis.fisfleet.domain.entities.MoveEntity;
@@ -62,7 +62,7 @@ public class GameServiceImpl implements GameService {
         gameManager.crearPartida(player1, player2, puntuacion, movimiento);
 
         // Create game state
-        GameStateDTO gameState = GameStateDTO.builder()
+        GameSession gameState = GameSession.builder()
                 .player1Id(player1.getId())
                 .player2Id(player2.getId())
                 .turnOfPlayer(new Random().nextInt(2) + 1) // 1 or 2
@@ -89,7 +89,7 @@ public class GameServiceImpl implements GameService {
 //                player1View;
     }
 
-    private GameViewDTO createPlayerView(GameStateDTO gameState, Long playerId) {
+    private GameViewDTO createPlayerView(GameSession gameState, Long playerId) {
         boolean isPlayer1 = playerId.equals(gameState.getPlayer1Id());
 
         GameViewDTO view = new GameViewDTO();
@@ -137,7 +137,7 @@ public class GameServiceImpl implements GameService {
     }
 
     @Override
-    public GameStateDTO getGameById(Long gameId) {
+    public GameSession getGameById(Long gameId) {
         if (gameId == null) {
             throw new IllegalArgumentException("Game ID cannot be null");
         }
@@ -159,7 +159,7 @@ public class GameServiceImpl implements GameService {
         }
 
         // If not cached, get the game state and create a view
-        GameStateDTO gameState = getGameById(gameId);
+        GameSession gameState = getGameById(gameId);
 
         // Verify the player is part of the game
         if (!playerId.equals(gameState.getPlayer1Id()) && !playerId.equals(gameState.getPlayer2Id())) {
@@ -174,7 +174,7 @@ public class GameServiceImpl implements GameService {
     }
 
     @Override
-    public GameStateDTO performAttack(MoveRequest request) {
+    public GameSession performAttack(MoveRequest request) {
         if (request == null) {
             throw new IllegalArgumentException("Move request cannot be null");
         }
@@ -191,7 +191,7 @@ public class GameServiceImpl implements GameService {
         }
 
         // Get the game state from cache
-        GameStateDTO gameState = getGameById(gameId);
+        GameSession gameState = getGameById(gameId);
 
         // Verify it's the player's turn
         boolean isPlayer1 = playerId.equals(gameState.getPlayer1Id());
@@ -251,22 +251,22 @@ public class GameServiceImpl implements GameService {
 
     // TODO
     @Override
-    public GameStateDTO performCounterAttack(MoveRequest request) {
+    public GameSession performCounterAttack(MoveRequest request) {
         return null;
     }
 
     @Override
-    public GameStateDTO launchArtilleryAttack(MoveRequest request) {
+    public GameSession launchArtilleryAttack(MoveRequest request) {
         return null;
     }
 
     @Override
-    public GameStateDTO repairSubmarine(Long gameId, Long playerId) {
+    public GameSession repairSubmarine(Long gameId, Long playerId) {
         return null;
     }
 
     @Override
-    public GameStateDTO revealRow(Long gameId, Long playerId, int y) {
+    public GameSession revealRow(Long gameId, Long playerId, int y) {
         return null;
     }
 
@@ -389,13 +389,13 @@ public class GameServiceImpl implements GameService {
 
         try {
             // Get the game state from cache
-            Optional<GameStateDTO> optionalGameState = gameCacheService.getGameState(gameId);
+            Optional<GameSession> optionalGameState = gameCacheService.getGameState(gameId);
 
             if (optionalGameState.isEmpty()) {
                 return false;
             }
 
-            GameStateDTO gameState = optionalGameState.get();
+            GameSession gameState = optionalGameState.get();
 
             // Check if the player is part of the game
             boolean isPlayer1 = playerId.equals(gameState.getPlayer1Id());

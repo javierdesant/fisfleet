@@ -2,7 +2,7 @@ package es.upm.etsisi.fis.fisfleet.infrastructure.cache;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
-import es.upm.etsisi.fis.fisfleet.api.dto.GameStateDTO;
+import es.upm.etsisi.fis.fisfleet.api.dto.GameSession;
 import es.upm.etsisi.fis.fisfleet.api.dto.GameViewDTO;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,7 +14,7 @@ import java.util.concurrent.TimeUnit;
 public class CacheConfig {
 
     @Bean
-    public Cache<Long, GameStateDTO> gameStateCache() {
+    public Cache<Long, GameSession> gameStateCache() {
         return Caffeine.newBuilder()
                 .expireAfterWrite(30, TimeUnit.MINUTES)
                 .initialCapacity(100)
