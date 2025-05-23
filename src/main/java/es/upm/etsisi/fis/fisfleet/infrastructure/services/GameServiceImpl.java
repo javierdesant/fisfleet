@@ -2,10 +2,11 @@ package es.upm.etsisi.fis.fisfleet.infrastructure.services;
 
 import es.upm.etsisi.fis.fisfleet.api.dto.GameStateDTO;
 import es.upm.etsisi.fis.fisfleet.api.dto.GameViewDTO;
-import es.upm.etsisi.fis.fisfleet.api.dto.SpecialAbility;
 import es.upm.etsisi.fis.fisfleet.api.dto.requests.MoveRequest;
-import es.upm.etsisi.fis.fisfleet.api.mappers.MachineMapper;
-import es.upm.etsisi.fis.fisfleet.domain.entities.*;
+import es.upm.etsisi.fis.fisfleet.domain.entities.MoveEntity;
+import es.upm.etsisi.fis.fisfleet.domain.entities.PlayerEntity;
+import es.upm.etsisi.fis.fisfleet.domain.entities.ScoreEntity;
+import es.upm.etsisi.fis.fisfleet.domain.entities.UserEntity;
 import es.upm.etsisi.fis.fisfleet.domain.repositories.GameResultRepository;
 import es.upm.etsisi.fis.fisfleet.infrastructure.adapters.GameManager;
 import es.upm.etsisi.fis.fisfleet.infrastructure.cache.GameCacheService;
@@ -28,7 +29,7 @@ import java.util.Random;
 public class GameServiceImpl implements GameService {
 
     private final GameResultRepository gameResultRepository;
-    private final MachineMapper machineMapper;
+    //    private final MachineMapper machineMapper;
     private final GameCacheService gameCacheService;
     private final AuthenticationService authenticationService;
     private final GameManager gameManager;
@@ -38,9 +39,11 @@ public class GameServiceImpl implements GameService {
         Maquina maquina = FactoriaMaquina.creaMaquina(difficulty.name());
         assert maquina != null;
 
-        MachineEntity machine = machineMapper.mapToMachineEntity(maquina);
+//        FIXME
+//         MachineEntity machine = machineMapper.mapToMachineEntity(maquina);
 
-        return this.createMatch(this.getLoggedInUser(), machine);
+//        return this.createMatch(this.getLoggedInUser(), machine);
+        return null;    // FIXME
     }
 
     private UserEntity getLoggedInUser() {
@@ -71,17 +74,19 @@ public class GameServiceImpl implements GameService {
         // Save game state to cache
         gameCacheService.saveGameState(gameState);
 
-        // Associate players with game
-        gameCacheService.addPlayerGame(player1.getId(), gameId);
-        gameCacheService.addPlayerGame(player2.getId(), gameId);
+        // FIXME:
+//        // Associate players with game
+//        gameCacheService.addPlayerGame(player1.getId(), gameId);
+//        gameCacheService.addPlayerGame(player2.getId(), gameId);
+//
+//        // Create and cache player view for player1
+//        GameViewDTO player1View = createPlayerView(gameState, player1.getId());
+//        gameCacheService.savePlayerView(gameId, player1.getId(), player1View);
+//
+//        log.info("Created new game with ID: {}", gameId);
 
-        // Create and cache player view for player1
-        GameViewDTO player1View = createPlayerView(gameState, player1.getId());
-        gameCacheService.savePlayerView(gameId, player1.getId(), player1View);
-
-        log.info("Created new game with ID: {}", gameId);
-
-        return player1View;
+        return null;    // FIXME
+//                player1View;
     }
 
     private GameViewDTO createPlayerView(GameStateDTO gameState, Long playerId) {
@@ -103,10 +108,8 @@ public class GameServiceImpl implements GameService {
         view.setYourTurn((isPlayer1 && gameState.getTurnOfPlayer() == 1) || 
                          (!isPlayer1 && gameState.getTurnOfPlayer() == 2));
 
-        // Set ability information
-        view.setCanUseAbility(gameState.getCanUseAbility() != null && 
-                             ((isPlayer1 && gameState.getCanUseAbility().toString().contains("PLAYER1")) || 
-                              (!isPlayer1 && gameState.getCanUseAbility().toString().contains("PLAYER2"))));
+//         TODO: Set ability information
+//          view.setAvailableAbility();
 
         return view;
     }
@@ -176,8 +179,10 @@ public class GameServiceImpl implements GameService {
             throw new IllegalArgumentException("Move request cannot be null");
         }
 
-        Long gameId = request.getGameId();
-        Long playerId = request.getPlayerId();
+        Long gameId = 0L;
+//         FIXME       request.getGameId();
+        Long playerId = 0L;
+//         FIXME       request.getPlayerId();
         int x = request.getCoordinateX();
         int y = request.getCoordinateY();
 
@@ -269,108 +274,112 @@ public class GameServiceImpl implements GameService {
     // TODO!
     // FIXME
 
-    @Override
-    public GameStateDTO performSpecialAttack(MoveRequest request) {
-        if (request == null) {
-            throw new IllegalArgumentException("Move request cannot be null");
-        }
+//    @Override
+//    public GameStateDTO performSpecialAttack(MoveRequest request) {
+//        if (request == null) {
+//            throw new IllegalArgumentException("Move request cannot be null");
+//        }
+//
+////        FIXME:
+//        Long gameId = 0L;
+////                request.getGameId();
+//        Long playerId = 0L;
 
-        Long gameId = request.getGameId();
-        Long playerId = request.getPlayerId();
-        SpecialAbility ability = request.getSpecialAbility();
-
-        if (gameId == null || playerId == null) {
-            throw new IllegalArgumentException("Game ID and player ID cannot be null");
-        }
-
-        if (ability == null || ability == SpecialAbility.NONE) {
-            throw new IllegalArgumentException("Special ability cannot be null or NONE");
-        }
-
-        // Get the game state from cache
-        GameStateDTO gameState = getGameById(gameId);
-
-        // Verify it's the player's turn
-        boolean isPlayer1 = playerId.equals(gameState.getPlayer1Id());
-        boolean isPlayer2 = playerId.equals(gameState.getPlayer2Id());
-
-        if (!isPlayer1 && !isPlayer2) {
-            throw new IllegalArgumentException("Player is not part of the game: " + playerId);
-        }
-
-        if ((gameState.getTurnOfPlayer() == 1 && !isPlayer1) || 
-            (gameState.getTurnOfPlayer() == 2 && !isPlayer2)) {
-            throw new IllegalStateException("It's not the player's turn");
-        }
-
-        // Verify the player can use the ability
-        if (gameState.getCanUseAbility() == SpecialAbility.NONE) {
-            throw new IllegalStateException("No special ability available");
-        }
-
-        boolean canUseAbility = (isPlayer1 && gameState.getCanUseAbility().toString().contains("PLAYER1")) || 
-                               (!isPlayer1 && gameState.getCanUseAbility().toString().contains("PLAYER2"));
-
-        if (!canUseAbility) {
-            throw new IllegalStateException("Player cannot use special ability");
-        }
-
-        // Perform the special attack based on the ability type
-        int x = request.getCoordinateX();
-        int y = request.getCoordinateY();
-
-        // TODO: Implement special attack logic based on ability type
-        // This is a simplified implementation
-        char[][] targetBoard = isPlayer1 ? gameState.getPlayer2Board() : gameState.getPlayer1Board();
-
-        // Check if the attack is valid (within bounds)
-        if (x < 0 || x >= targetBoard.length || y < 0 || y >= targetBoard[0].length) {
-            throw new IllegalArgumentException("Attack coordinates out of bounds: (" + x + ", " + y + ")");
-        }
-
-        // Special attack effect (simplified)
-        // For example, a special attack might hit multiple cells
-        for (int i = Math.max(0, x - 1); i <= Math.min(targetBoard.length - 1, x + 1); i++) {
-            for (int j = Math.max(0, y - 1); j <= Math.min(targetBoard[0].length - 1, y + 1); j++) {
-                // Skip already attacked cells
-                if (targetBoard[i][j] == 'X' || targetBoard[i][j] == 'O') {
-                    continue;
-                }
-
-                // Determine if it's a hit or miss
-                boolean isHit = targetBoard[i][j] != ' ' && targetBoard[i][j] != 0;
-                targetBoard[i][j] = isHit ? 'X' : 'O'; // X for hit, O for miss
-            }
-        }
-
-        // Update the board in the game state
-        if (isPlayer1) {
-            gameState.setPlayer2Board(targetBoard);
-        } else {
-            gameState.setPlayer1Board(targetBoard);
-        }
-
-        // Reset the special ability
-        gameState.setCanUseAbility(SpecialAbility.NONE);
-
-        // Switch turns
-        gameState.setTurnOfPlayer(gameState.getTurnOfPlayer() == 1 ? 2 : 1);
-
-        // Save the updated game state
-        gameCacheService.saveGameState(gameState);
-
-        // Update player views
-        GameViewDTO player1View = createPlayerView(gameState, gameState.getPlayer1Id());
-        GameViewDTO player2View = createPlayerView(gameState, gameState.getPlayer2Id());
-
-        gameCacheService.savePlayerView(gameId, gameState.getPlayer1Id(), player1View);
-        gameCacheService.savePlayerView(gameId, gameState.getPlayer2Id(), player2View);
-
-        log.debug("Special attack performed at position ({}, {}) by player {} using ability {}", 
-                 x, y, playerId, ability);
-
-        return gameState;
-    }
+    /// /                request.getPlayerId();
+//        SpecialAbility ability = request.getSpecialAbility();
+//
+//        if (gameId == null || playerId == null) {
+//            throw new IllegalArgumentException("Game ID and player ID cannot be null");
+//        }
+//
+//        if (ability == null || ability == SpecialAbility.NONE) {
+//            throw new IllegalArgumentException("Special ability cannot be null or NONE");
+//        }
+//
+//        // Get the game state from cache
+//        GameStateDTO gameState = getGameById(gameId);
+//
+//        // Verify it's the player's turn
+//        boolean isPlayer1 = playerId.equals(gameState.getPlayer1Id());
+//        boolean isPlayer2 = playerId.equals(gameState.getPlayer2Id());
+//
+//        if (!isPlayer1 && !isPlayer2) {
+//            throw new IllegalArgumentException("Player is not part of the game: " + playerId);
+//        }
+//
+//        if ((gameState.getTurnOfPlayer() == 1 && !isPlayer1) ||
+//            (gameState.getTurnOfPlayer() == 2 && !isPlayer2)) {
+//            throw new IllegalStateException("It's not the player's turn");
+//        }
+//
+//        // Verify the player can use the ability
+//        if (gameState.getCanUseAbility() == SpecialAbility.NONE) {
+//            throw new IllegalStateException("No special ability available");
+//        }
+//
+//        boolean canUseAbility = (isPlayer1 && gameState.getCanUseAbility().toString().contains("PLAYER1")) ||
+//                               (!isPlayer1 && gameState.getCanUseAbility().toString().contains("PLAYER2"));
+//
+//        if (!canUseAbility) {
+//            throw new IllegalStateException("Player cannot use special ability");
+//        }
+//
+//        // Perform the special attack based on the ability type
+//        int x = request.getCoordinateX();
+//        int y = request.getCoordinateY();
+//
+//        // TODO: Implement special attack logic based on ability type
+//        // This is a simplified implementation
+//        char[][] targetBoard = isPlayer1 ? gameState.getPlayer2Board() : gameState.getPlayer1Board();
+//
+//        // Check if the attack is valid (within bounds)
+//        if (x < 0 || x >= targetBoard.length || y < 0 || y >= targetBoard[0].length) {
+//            throw new IllegalArgumentException("Attack coordinates out of bounds: (" + x + ", " + y + ")");
+//        }
+//
+//        // Special attack effect (simplified)
+//        // For example, a special attack might hit multiple cells
+//        for (int i = Math.max(0, x - 1); i <= Math.min(targetBoard.length - 1, x + 1); i++) {
+//            for (int j = Math.max(0, y - 1); j <= Math.min(targetBoard[0].length - 1, y + 1); j++) {
+//                // Skip already attacked cells
+//                if (targetBoard[i][j] == 'X' || targetBoard[i][j] == 'O') {
+//                    continue;
+//                }
+//
+//                // Determine if it's a hit or miss
+//                boolean isHit = targetBoard[i][j] != ' ' && targetBoard[i][j] != 0;
+//                targetBoard[i][j] = isHit ? 'X' : 'O'; // X for hit, O for miss
+//            }
+//        }
+//
+//        // Update the board in the game state
+//        if (isPlayer1) {
+//            gameState.setPlayer2Board(targetBoard);
+//        } else {
+//            gameState.setPlayer1Board(targetBoard);
+//        }
+//
+//        // Reset the special ability
+//        gameState.setCanUseAbility(SpecialAbility.NONE);
+//
+//        // Switch turns
+//        gameState.setTurnOfPlayer(gameState.getTurnOfPlayer() == 1 ? 2 : 1);
+//
+//        // Save the updated game state
+//        gameCacheService.saveGameState(gameState);
+//
+//        // Update player views
+//        GameViewDTO player1View = createPlayerView(gameState, gameState.getPlayer1Id());
+//        GameViewDTO player2View = createPlayerView(gameState, gameState.getPlayer2Id());
+//
+//        gameCacheService.savePlayerView(gameId, gameState.getPlayer1Id(), player1View);
+//        gameCacheService.savePlayerView(gameId, gameState.getPlayer2Id(), player2View);
+//
+//        log.debug("Special attack performed at position ({}, {}) by player {} using ability {}",
+//                 x, y, playerId, ability);
+//
+//        return gameState;
+//    }
 
     @Override
     public boolean canPlayerPerformAction(Long gameId, Long playerId) {
@@ -404,6 +413,8 @@ public class GameServiceImpl implements GameService {
             return false;
         }
     }
+
+    // TODO
 
     @Override
     public boolean isGameOver(Long gameId) {

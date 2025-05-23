@@ -32,7 +32,7 @@ public class GameWebSocketController {
     @MessageMapping("/game/move")
     public void processMove(MoveRequest moveRequest, Principal principal) {
         String playerId = principal.getName(); // Comes from authenticated JWT
-        Long gameId = moveRequest.getGameId();
+//        Long gameId = moveRequest.getGameId();
 
 //        TODO: Register the move
 //         gameService.processMove(gameId, playerId, moveRequest);
