@@ -48,26 +48,9 @@ public abstract class PlayerEntity implements Serializable, IJugador {
     @OneToMany(mappedBy = "player")
     private Set<ScoreEntity> scores = new LinkedHashSet<>();
 
-    @Override
-    public boolean aceptarAccionComplementaria(TBarcoAccionComplementaria tBarcoAccionComplementaria, int cantidadDisponible) {
-        return cantidadDisponible>0;
-    }
-
     @Builder.Default
     @Transient
     private int moveIndex = 0;
-
-    @Override
-    public int[] realizaTurno(char[][] chars) {
-        List<MoveEntity> orderedMoves = this.getMoves().stream().toList();
-
-        if (moveIndex < orderedMoves.size()) {
-            MoveEntity move = orderedMoves.get(moveIndex++);
-            return new int[] { move.getCoordinateX(), move.getCoordinateY() };
-        }
-
-        return new int[]{-1, -1};
-    }
 
     @Override
     public void addMovimiento(IMovimiento movIn) {
@@ -91,5 +74,10 @@ public abstract class PlayerEntity implements Serializable, IJugador {
     @Override
     public List<IPuntuacion> getPuntuaciones() {
         return new ArrayList<>(scores);
+    }
+
+    @Override
+    public String getNombre() {
+        return this.getId().toString();
     }
 }

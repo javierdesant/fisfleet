@@ -1,13 +1,13 @@
 package es.upm.etsisi.fis.fisfleet.domain.entities;
 
+import es.upm.etsisi.fis.model.FactoriaMaquina;
+import es.upm.etsisi.fis.model.Maquina;
+import es.upm.etsisi.fis.model.TBarcoAccionComplementaria;
 import es.upm.etsisi.fis.model.TDificultad;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -36,8 +36,17 @@ public class MachineEntity extends PlayerEntity {
     @Column(name = "dificultad", nullable = false, length = 20)
     private TDificultad difficulty;
 
+    @Builder.Default
+    @Transient
+    private Maquina maquina = FactoriaMaquina.creaMaquina(difficulty.toString());
+
     @Override
-    public String getNombre() {
-        return this.getGeneratedName();
+    public int[] realizaTurno(char[][] chars) {
+        return maquina.realizaTurno(chars);
+    }
+
+    @Override
+    public boolean aceptarAccionComplementaria(TBarcoAccionComplementaria tBarcoAccionComplementaria, int cantidadDisponible) {
+        return maquina.aceptarAccionComplementaria(tBarcoAccionComplementaria, cantidadDisponible);
     }
 }

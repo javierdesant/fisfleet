@@ -66,6 +66,19 @@ public class UserEntity extends PlayerEntity implements UserDetails, Serializabl
         ).toList();
     }
 
+    @Override
+    public int[] realizaTurno(char[][] chars) {
+        try {
+            String gameId = GameContextHolder.getGameIdForPlayer(this.id);
+            MoveRequest move = MoveRequestRegistry.waitForMove(gameId, this.id).get();
+            return new int[]{move.getCoordinateX(), move.getCoordinateY()};
+        } catch (InterruptedException | ExecutionException e) {
+            throw new RuntimeException("Error esperando el turno del jugador", e);
+        }
+    }
+
+
+
     /**
      * This system does not store or use passwords directly, as authentication
      * is managed through the UPM's LDAP service.
@@ -78,10 +91,5 @@ public class UserEntity extends PlayerEntity implements UserDetails, Serializabl
     @Override
     public String getUsername() {
         return this.getUsernameHash();
-    }
-
-    @Override
-    public String getNombre() {
-        return this.getAlias();
     }
 }
