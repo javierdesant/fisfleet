@@ -1,8 +1,8 @@
 package es.upm.etsisi.fis.fisfleet.infrastructure.cache;
 
 import com.github.benmanes.caffeine.cache.Cache;
-import es.upm.etsisi.fis.fisfleet.api.dto.GameSession;
 import es.upm.etsisi.fis.fisfleet.api.dto.GameViewDTO;
+import es.upm.etsisi.fis.fisfleet.domain.GameSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

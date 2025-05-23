@@ -1,5 +1,6 @@
-package es.upm.etsisi.fis.fisfleet.api.dto;
+package es.upm.etsisi.fis.fisfleet.domain;
 
+import es.upm.etsisi.fis.fisfleet.api.dto.SpecialAbility;
 import es.upm.etsisi.fis.fisfleet.api.validation.ValidMatrixSize;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;

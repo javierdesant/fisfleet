@@ -1,7 +1,7 @@
 package es.upm.etsisi.fis.fisfleet.infrastructure.cache;
 
-import es.upm.etsisi.fis.fisfleet.api.dto.GameSession;
 import es.upm.etsisi.fis.fisfleet.api.dto.GameViewDTO;
+import es.upm.etsisi.fis.fisfleet.domain.GameSession;
 
 import java.util.List;
 import java.util.Optional;

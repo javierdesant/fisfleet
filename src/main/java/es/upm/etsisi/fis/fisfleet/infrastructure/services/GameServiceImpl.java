@@ -1,8 +1,8 @@
 package es.upm.etsisi.fis.fisfleet.infrastructure.services;
 
-import es.upm.etsisi.fis.fisfleet.api.dto.GameSession;
 import es.upm.etsisi.fis.fisfleet.api.dto.GameViewDTO;
 import es.upm.etsisi.fis.fisfleet.api.dto.requests.MoveRequest;
+import es.upm.etsisi.fis.fisfleet.domain.GameSession;
 import es.upm.etsisi.fis.fisfleet.domain.entities.MoveEntity;
 import es.upm.etsisi.fis.fisfleet.domain.entities.PlayerEntity;
 import es.upm.etsisi.fis.fisfleet.domain.entities.ScoreEntity;
