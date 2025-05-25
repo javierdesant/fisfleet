@@ -36,11 +36,17 @@ public class JwtHandshakeInterceptor implements HandshakeInterceptor {
         }
 
         HttpServletRequest httpRequest = servletRequest.getServletRequest();
-        String gameId = this.extractGameId(httpRequest);
 
         this.validateTokenWebsocket(httpRequest, request);
 
-        attributes.put("gameId", gameId);
+        String gameId = this.extractGameId(httpRequest);
+        try {
+            Long gameIdLong = Long.parseLong(gameId);
+            attributes.put("gameId", gameIdLong);
+        } catch (NumberFormatException e) {
+            log.error("Invalid gameId format: {}", gameId);
+            return false;
+        }
         return true;
     }
 
