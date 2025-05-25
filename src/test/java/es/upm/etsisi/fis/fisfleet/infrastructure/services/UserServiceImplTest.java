@@ -143,11 +143,15 @@ class UserServiceImplTest {
 }*/
 
 import es.upm.etsisi.fis.fisfleet.DataProvider;
+import es.upm.etsisi.fis.fisfleet.api.dto.requests.UserRequest;
 import es.upm.etsisi.fis.fisfleet.domain.entities.UserEntity;
+import es.upm.etsisi.fis.fisfleet.domain.repositories.UserRepository;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.userdetails.User;
 
@@ -157,17 +161,17 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class UserServiceImplTest {
-    @Mock
-    private UserService userService;
-    @InjectMocks
-    public UserServiceImpl userServiceImpl;
+
     @Test
     public void readTest(){
         Long id = 2L;
+        UserRepository userRepository = Mockito.mock(UserRepository.class);
+        UserService userService = new UserServiceImpl(userRepository);
 
-        when(this.userService.read( anyLong() )).thenReturn(DataProvider.userEntityMock());
-        UserEntity user = this.userServiceImpl.read(id);
+        Mockito.when(userRepository.findById(anyLong()))
+                .thenReturn(java.util.Optional.of(DataProvider.userEntityMock()));
+        UserEntity user = userService.read(id);
 
-        assertNotNull(user);
+        Assertions.assertNotNull(user);
     }
 }
