@@ -1,16 +1,17 @@
 package es.upm.etsisi.fis.fisfleet.infrastructure.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import es.upm.etsisi.fis.fisfleet.api.dto.GameViewDTO;
 import es.upm.etsisi.fis.fisfleet.api.dto.requests.MoveRequest;
-import es.upm.etsisi.fis.fisfleet.domain.entities.UserEntity;
 import es.upm.etsisi.fis.fisfleet.infrastructure.cache.GameCacheService;
 import es.upm.etsisi.fis.fisfleet.infrastructure.services.AuthenticationService;
+import es.upm.etsisi.fis.fisfleet.infrastructure.services.GameResultService;
 import es.upm.etsisi.fis.fisfleet.infrastructure.services.GameService;
+import es.upm.etsisi.fis.model.Partida;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.lang.NonNull;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
@@ -18,40 +19,77 @@ import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import java.io.IOException;
+import java.security.Principal;
+import java.util.HashMap;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
-@RequiredArgsConstructor
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class GameWebSocketHandler extends TextWebSocketHandler {
     private final ObjectMapper objectMapper = new ObjectMapper();
-
-    private final GameService gameService;
-    private final GameCacheService gameCacheService;
     private final AuthenticationService authenticationService;
+    private final GameCacheService gameCacheService;
+    private final GameService gameService;
+    private final GameResultService gameResultService;
 
-    // Simple cache for quick access
-    private final Set<WebSocketSession> sessions = new CopyOnWriteArraySet<>();
+    private Set<WebSocketSession> sessions;
 
-    @Override
-    public void afterConnectionEstablished(@NonNull WebSocketSession session) {
-        sessions.add(session);
-        String sessionId = session.getId();
-
-        Long playerId = this.getLoggedInUserId();
-        if (playerId == null) {
-            throw new SecurityException("User is not logged in for session " + sessionId);
+    private static Long getPlayerId(Principal principal) {
+        if (principal instanceof UsernamePasswordAuthenticationToken) {
+            return Long.parseLong(principal.getName());
+        } else {
+            log.error("Invalid principal: {}", principal);
+            throw new IllegalStateException("Invalid principal");
         }
-
-        gameCacheService.savePlayerSession(playerId, sessionId);
-        log.info("New connection: {} for player: {}", sessionId, playerId);
     }
 
-    private Long getLoggedInUserId() {
-        UserEntity loggedInUser = authenticationService.findLoggedInUser();
-        return loggedInUser.getId();
+    @PostConstruct
+    public void init() {
+        this.sessions = new CopyOnWriteArraySet<>();
+    }
+
+    @Override
+    public void afterConnectionEstablished(@NonNull WebSocketSession newSession) {
+        Long playerId = getPlayerId(newSession.getPrincipal());
+
+        this.disconnectExistingSessionIfPresent(playerId);
+
+        this.registerNewSession(playerId, newSession);
+        log.info("New session established: {}", newSession.getId());
+    }
+
+    private void disconnectExistingSessionIfPresent(Long playerId) {
+        gameCacheService.getPlayerSession(playerId).ifPresent(existingSessionId -> {
+            this.findOpenSession(existingSessionId).ifPresent(this::disconnectSession);
+            gameCacheService.removePlayerSession(playerId);
+        });
+    }
+
+    private Optional<WebSocketSession> findOpenSession(String sessionId) {
+        return sessions.stream()
+                .filter(s -> s.getId().equals(sessionId) && s.isOpen())
+                .findFirst();
+    }
+
+    private void disconnectSession(WebSocketSession session) {
+        try {
+            String DISCONNECT_MESSAGE = "You have been disconnected because you logged in from another device";
+
+            session.sendMessage(new TextMessage(DISCONNECT_MESSAGE));
+            session.close(CloseStatus.NORMAL.withReason(DISCONNECT_MESSAGE));
+            sessions.remove(session);
+            log.warn("Previous session closed: {}", session.getId());
+        } catch (IOException e) {
+            log.error("Error closing previous session: {}", session.getId(), e);
+        }
+    }
+
+    private void registerNewSession(Long playerId, WebSocketSession newSession) {
+        sessions.add(newSession);
+        gameCacheService.savePlayerSession(playerId, newSession.getId());
     }
 
     @Override
