@@ -187,17 +187,37 @@ public class GameWebSocketHandler extends TextWebSocketHandler {
     }
 
     @Override
-    public void handleTransportError(WebSocketSession session, @NonNull Throwable exception) throws Exception {
+    public void afterConnectionClosed(@NonNull WebSocketSession session, @NonNull CloseStatus status) {
+        sessions.remove(session);
+        Long playerId = getPlayerId(session.getPrincipal());
+        gameCacheService.removePlayerSession(playerId);
+        log.info("Disconnected session {} for player {}", session.getId(), playerId);
+    }
+
+    @Override
+    public void handleTransportError(WebSocketSession session, @NonNull Throwable exception) {
         log.error("Error in the connection {}: {}", session.getId(), exception.getMessage(), exception);
 
         if (session.isOpen()) {
             try {
                 session.close(CloseStatus.SERVER_ERROR);
+                sessions.remove(session);
             } catch (IOException ex) {
                 log.error("Failed to close session {} after transport error: {}", session.getId(), ex.getMessage(), ex);
             }
         }
 
         this.sendErrorMessage(session, exception.getMessage());
+    }
+
+    private void sendErrorMessage(WebSocketSession session, String errorMessage) {
+        try {
+            if (session.isOpen()) {
+                session.sendMessage(new TextMessage("{\"error\": \"" + errorMessage + "\"}"));
+            }
+        } catch (Exception ex) {
+            log.error("Error sending error message: {}", ex.getMessage(), ex);
+            throw new RuntimeException("Error sending error message", ex);
+        }
     }
 }
