@@ -13,19 +13,24 @@ public class DataProvider {
     public static List<UserRequest> userRequestListMock() {
         return List.of(
                 UserRequest.builder()
-                        .username("test1.user@upm.es")
+                        .username("test1.user@alumnos.upm.es")
                         .alias("TestUser1")
                         .password("Password123!")
                         .build(),
                 UserRequest.builder()
-                        .username("test2.user@upm.es")
+                        .username("test2.user@pas.upm.es")
                         .alias("TestUser2")
                         .password("Password456!")
                         .build(),
                 UserRequest.builder()
-                        .username("test3.user@upm.es")
+                        .username("test3.user@pdi.upm.es")
                         .alias("TestUser3")
                         .password("Password789!")
+                        .build(),
+                UserRequest.builder()
+                        .username("test4.user@upm.es")
+                        .alias("TestUser4")
+                        .password("PasswordNull!")
                         .build()
         );
     }
