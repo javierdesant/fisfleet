@@ -13,8 +13,6 @@ import java.io.Serializable;
 @AllArgsConstructor
 public class GameViewDTO implements Serializable {
 
-    private Long gameId;
-
     private char[][] ownBoard;
 
     private char[][] enemyBoardMasked;
