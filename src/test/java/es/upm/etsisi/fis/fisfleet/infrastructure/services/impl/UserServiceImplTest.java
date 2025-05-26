@@ -7,7 +7,9 @@ import es.upm.etsisi.fis.fisfleet.domain.repositories.UserRepository;
 import es.upm.etsisi.fis.fisfleet.infrastructure.exceptions.RegistrationException;
 import es.upm.etsisi.fis.fisfleet.utils.RolePermission;
 import jakarta.persistence.EntityNotFoundException;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -25,18 +27,15 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class UserServiceImplTest {
 
-    @Mock
-    private UserRepository userRepository;
-
-    @InjectMocks
-    private UserServiceImpl userService;
-
-    private MockedStatic<ObtencionDeRol> roleMock;
-    private MockedStatic<es.upm.etsisi.fis.fisfleet.infrastructure.config.security.LDAPAuthenticator> ldapMock;
-
     private final UserRequest alumnoRequest = DataProvider.userRequestListMock().get(0);
     private final UserRequest pasRequest = DataProvider.userRequestListMock().get(1);
     private final UserEntity mockUser = DataProvider.userEntityMock();
+    @Mock
+    private UserRepository userRepository;
+    @InjectMocks
+    private UserServiceImpl userService;
+    private MockedStatic<ObtencionDeRol> roleMock;
+    private MockedStatic<es.upm.etsisi.fis.fisfleet.infrastructure.config.security.LDAPAuthenticator> ldapMock;
 
     @BeforeEach
     void setup() {

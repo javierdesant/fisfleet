@@ -20,10 +20,13 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.List;
+
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -55,21 +58,6 @@ class UserControllerTest {
         return objectMapper.writeValueAsString(obj);
     }
 
-    @TestConfiguration
-    static class MockConfig {
-        @Bean
-        @Primary
-        public UserService userService() {
-            return Mockito.mock(UserService.class);
-        }
-
-        @Bean
-        @Primary
-        public UserSecurity userSecurity() {
-            return Mockito.mock(UserSecurity.class);
-        }
-    }
-
     @Test
     void testCreateUser_success() throws Exception {
         Mockito.when(userService.create(any(UserRequest.class))).thenReturn(validUser);
@@ -84,17 +72,56 @@ class UserControllerTest {
 
     @Test
     void testCreateUser_validationError() throws Exception {
-        UserRequest invalidRequest = UserRequest.builder()
-                .username("invalid@upm.es")
+
+        UserRequest invalidAliasEmpty = UserRequest.builder()
+                .username("valid@upm.es")
                 .alias("")
                 .password("password123")
                 .build();
 
-        mockMvc.perform(post("/api/users")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(toJson(invalidRequest)))
-                .andExpect(status().isBadRequest());
+
+        UserRequest invalidEmail = UserRequest.builder()
+                .username("invalid@urss.es")
+                .alias("ValidAlias")
+                .password("password123")
+                .build();
+
+
+        UserRequest invalidAliasPattern = UserRequest.builder()
+                .username("valid@upm.es")
+                .alias("inv@lid")
+                .password("password123")
+                .build();
+
+
+        UserRequest invalidAliasTooLong = UserRequest.builder()
+                .username("valid@upm.es")
+                .alias("AliasTooLong123")
+                .password("password123")
+                .build();
+
+
+        UserRequest forbiddenAlias = UserRequest.builder()
+                .username("valid@upm.es")
+                .alias("admin")
+                .password("password123")
+                .build();
+
+
+        for (UserRequest invalidRequest : List.of(
+                invalidAliasEmpty,
+                invalidEmail,
+                invalidAliasPattern,
+                invalidAliasTooLong,
+                forbiddenAlias
+        )) {
+            mockMvc.perform(post("/api/users")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(toJson(invalidRequest)))
+                    .andExpect(status().isBadRequest());
+        }
     }
+
 
     @WithMockUser(authorities = "MANAGE_USERS")
     @Test
@@ -223,5 +250,20 @@ class UserControllerTest {
 
         mockMvc.perform(delete("/api/users/{id}", 999L))
                 .andExpect(status().isNotFound());
+    }
+
+    @TestConfiguration
+    static class MockConfig {
+        @Bean
+        @Primary
+        public UserService userService() {
+            return Mockito.mock(UserService.class);
+        }
+
+        @Bean
+        @Primary
+        public UserSecurity userSecurity() {
+            return Mockito.mock(UserSecurity.class);
+        }
     }
 }
