@@ -1,6 +1,6 @@
 package es.upm.etsisi.fis.fisfleet.infrastructure.config.security;
 
-import es.upm.etsisi.fis.fisfleet.infrastructure.services.JwtService;
+import es.upm.etsisi.fis.fisfleet.infrastructure.services.impl.JwtService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

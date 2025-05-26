@@ -1,4 +1,4 @@
-package es.upm.etsisi.fis.fisfleet.infrastructure.services;
+package es.upm.etsisi.fis.fisfleet.infrastructure.services.impl;
 
 import es.upm.etsisi.fis.fisfleet.api.dto.requests.AuthenticationRequest;
 import es.upm.etsisi.fis.fisfleet.api.dto.requests.UserRequest;
@@ -8,6 +8,9 @@ import es.upm.etsisi.fis.fisfleet.api.mappers.UserMapper;
 import es.upm.etsisi.fis.fisfleet.domain.entities.UserEntity;
 import es.upm.etsisi.fis.fisfleet.domain.repositories.UserRepository;
 import es.upm.etsisi.fis.fisfleet.infrastructure.config.security.LDAPAuthenticator;
+import es.upm.etsisi.fis.fisfleet.infrastructure.services.AuthenticationService;
+import es.upm.etsisi.fis.fisfleet.infrastructure.services.TokenService;
+import es.upm.etsisi.fis.fisfleet.infrastructure.services.UserService;
 import es.upm.etsisi.fis.fisfleet.utils.RoleMapper;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

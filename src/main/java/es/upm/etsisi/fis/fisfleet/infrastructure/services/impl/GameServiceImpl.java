@@ -1,4 +1,4 @@
-package es.upm.etsisi.fis.fisfleet.infrastructure.services;
+package es.upm.etsisi.fis.fisfleet.infrastructure.services.impl;
 
 import es.upm.etsisi.fis.fisfleet.api.dto.GameViewDTO;
 import es.upm.etsisi.fis.fisfleet.api.dto.requests.MoveRequest;
@@ -10,6 +10,8 @@ import es.upm.etsisi.fis.fisfleet.domain.entities.UserEntity;
 import es.upm.etsisi.fis.fisfleet.domain.repositories.GameResultRepository;
 import es.upm.etsisi.fis.fisfleet.infrastructure.adapters.GameManager;
 import es.upm.etsisi.fis.fisfleet.infrastructure.cache.GameCacheService;
+import es.upm.etsisi.fis.fisfleet.infrastructure.services.AuthenticationService;
+import es.upm.etsisi.fis.fisfleet.infrastructure.services.GameService;
 import es.upm.etsisi.fis.model.*;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -70,9 +72,6 @@ public class GameServiceImpl implements GameService {
                 .player2Board(new char[10][10])
                 .startDate(Instant.now())
                 .build();
-
-        // Save game state to cache
-        gameCacheService.saveGameState(gameState);
 
         // FIXME:
 //        // Associate players with game

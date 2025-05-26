@@ -5,7 +5,7 @@ import es.upm.etsisi.fis.fisfleet.api.dto.GameViewDTO;
 import es.upm.etsisi.fis.fisfleet.api.dto.SpecialAbility;
 import es.upm.etsisi.fis.fisfleet.api.dto.requests.MoveRequest;
 import es.upm.etsisi.fis.fisfleet.infrastructure.cache.GameCacheService;
-import es.upm.etsisi.fis.fisfleet.infrastructure.services.GameResultService;
+import es.upm.etsisi.fis.fisfleet.infrastructure.services.impl.GameResultService;
 import es.upm.etsisi.fis.model.Nave;
 import es.upm.etsisi.fis.model.Partida;
 import jakarta.annotation.PostConstruct;

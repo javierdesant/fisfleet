@@ -1,15 +1,11 @@
-package es.upm.etsisi.fis.fisfleet.infrastructure.services;
+package es.upm.etsisi.fis.fisfleet.infrastructure.services.impl;
 
-import es.upm.etsisi.fis.fisfleet.api.dto.responses.GameResultResponse;
 import es.upm.etsisi.fis.fisfleet.domain.entities.GameResultEntity;
 import es.upm.etsisi.fis.fisfleet.domain.repositories.GameResultRepository;
-import es.upm.etsisi.fis.fisfleet.domain.repositories.PlayerRepository;
 import es.upm.etsisi.fis.model.Partida;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
