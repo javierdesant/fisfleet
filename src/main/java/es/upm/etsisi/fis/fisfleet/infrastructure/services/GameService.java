@@ -5,16 +5,17 @@ import org.springframework.web.socket.WebSocketSession;
 
 import java.util.HashMap;
 import java.util.Set;
+import java.util.UUID;
 
 public interface GameService {
 
-    Partida getPartidaOrThrow(Long playerId);
+    Partida getPartidaOrThrow(UUID gameId);
 
     boolean isPlayerTurn(Partida partida, Long playerId);
 
     HashMap<String, Object> applyTurn(Partida partida);
 
-    void handlePartidaState(Partida partida, Long playerId);
+    void handlePartidaState(Partida partida, UUID gameId);
 
     /**
      * TODO: Process special abilities for human player

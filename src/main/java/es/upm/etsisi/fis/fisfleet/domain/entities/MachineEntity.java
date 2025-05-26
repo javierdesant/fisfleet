@@ -18,7 +18,6 @@ import lombok.experimental.SuperBuilder;
 @Table(name = "maquina")
 public class MachineEntity extends PlayerEntity {
 
-    @Builder.Default
     @Size(max = 50)
     @NotNull
     @Column(name = "nombre_generado", nullable = false, length = 50)

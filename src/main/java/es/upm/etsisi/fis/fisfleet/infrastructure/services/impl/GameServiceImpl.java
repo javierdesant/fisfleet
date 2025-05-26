@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 
 @Slf4j
 @Service
@@ -28,8 +29,8 @@ public class GameServiceImpl implements GameService {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
-    public Partida getPartidaOrThrow(Long playerId) {
-        return gameCacheService.getPartida(playerId)
+    public Partida getPartidaOrThrow(UUID gameId) {
+        return gameCacheService.getPartida(gameId)
                 .orElseThrow(() -> new IllegalStateException("Partida not found"));
     }
 
@@ -44,14 +45,14 @@ public class GameServiceImpl implements GameService {
     }
 
     @Override
-    public void handlePartidaState(Partida partida, Long playerId) {
+    public void handlePartidaState(Partida partida, UUID gameId) {
         if (partida.fin()) {
             partida.setfin();
             gameResultService.persistFinished(partida);
-            gameCacheService.removePartida(playerId);
+            gameCacheService.removePartida(gameId);
         } else {
             partida.swapTurn();
-            gameCacheService.savePartida(playerId, partida);
+            gameCacheService.savePartida(gameId, partida);
         }
     }
 

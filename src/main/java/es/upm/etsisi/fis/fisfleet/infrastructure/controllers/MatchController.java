@@ -4,6 +4,7 @@ import es.upm.etsisi.fis.controller.ControladorPartida;
 import es.upm.etsisi.fis.fisfleet.infrastructure.adapters.VistaControladoraPartidaExt;
 import es.upm.etsisi.fis.fisfleet.infrastructure.services.MatchmakingService;
 import es.upm.etsisi.fis.fisfleet.infrastructure.services.UserService;
+import es.upm.etsisi.fis.model.TDificultad;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @AllArgsConstructor
@@ -22,9 +24,10 @@ public class MatchController {
     private final MatchmakingService matchmakingService;
 
     @PostMapping("/pve")
-    public ResponseEntity<String> startPveMatch(@AuthenticationPrincipal UserDetails userDetails) {
+    public ResponseEntity<String> startPveMatch(@AuthenticationPrincipal UserDetails userDetails,
+                                                @RequestParam(name = "difficulty", defaultValue = "NORMAL") TDificultad difficulty) {
         Long playerId = Long.parseLong(userDetails.getUsername());
-        String partidaId = matchmakingService.createPveMatch(playerId);
+        String partidaId = matchmakingService.createPveMatch(playerId, difficulty);
         return ResponseEntity.ok(partidaId);
     }
 

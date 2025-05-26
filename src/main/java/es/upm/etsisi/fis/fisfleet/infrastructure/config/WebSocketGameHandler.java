@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.security.Principal;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.HashMap;
 
@@ -39,7 +40,7 @@ public class WebSocketGameHandler extends TextWebSocketHandler {
 
     @Override
     public void afterConnectionEstablished(@NonNull WebSocketSession session) {
-        Long playerId = extractPlayerId(session);
+        Long playerId = this.extractPlayerId(session);
         disconnectIfExists(playerId);
         registerSession(playerId, session);
         log.info("New session established: {}", session.getId());
@@ -47,8 +48,9 @@ public class WebSocketGameHandler extends TextWebSocketHandler {
 
     @Override
     protected void handleTextMessage(@NonNull WebSocketSession session, @NonNull TextMessage message) throws Exception {
-        Long playerId = extractPlayerId(session);
-        Partida partida = gameService.getPartidaOrThrow(playerId);
+        Long playerId = this.extractPlayerId(session);
+        UUID gameId = this.extractGameId(session);
+        Partida partida = gameService.getPartidaOrThrow(gameId);
 
         if (!gameService.isPlayerTurn(partida, playerId)) {
             session.sendMessage(new TextMessage("No es tu turno"));
@@ -56,13 +58,13 @@ public class WebSocketGameHandler extends TextWebSocketHandler {
         }
 
         HashMap<String, Object> moveResult = gameService.applyTurn(partida);
-        gameService.handlePartidaState(partida, playerId);
+        gameService.handlePartidaState(partida, gameId);
 
         String gameType = String.valueOf(session.getAttributes().get("gameType"));
         switch (gameType) {
             case "pve" -> {
                 partida.aplicaTurno();
-                gameService.handlePartidaState(partida, playerId);
+                gameService.handlePartidaState(partida, gameId);
                 gameService.sendPartidaView(partida, Long.valueOf(partida.getTurnoName()), moveResult, sessions);
             }
             case "pvp" -> gameService.sendPartidaView(partida, playerId, moveResult, sessions);
@@ -70,10 +72,14 @@ public class WebSocketGameHandler extends TextWebSocketHandler {
         }
     }
 
+    private UUID extractGameId(WebSocketSession session) {
+        return UUID.fromString(String.valueOf(session.getAttributes().get("gameId")));
+    }
+
     @Override
     public void afterConnectionClosed(@NonNull WebSocketSession session, @NonNull CloseStatus status) {
         sessions.remove(session);
-        Long playerId = extractPlayerId(session);
+        Long playerId = this.extractPlayerId(session);
         gameCacheService.removePlayerSession(playerId);
         log.info("Disconnected session {} for player {}", session.getId(), playerId);
     }
@@ -90,7 +96,7 @@ public class WebSocketGameHandler extends TextWebSocketHandler {
         } finally {
             sessions.remove(session);
         }
-        sendErrorMessage(session, exception.getMessage());
+        this.sendErrorMessage(session, exception.getMessage());
     }
 
     private Long extractPlayerId(WebSocketSession session) {

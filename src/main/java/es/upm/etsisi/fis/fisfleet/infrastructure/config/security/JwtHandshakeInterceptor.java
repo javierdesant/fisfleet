@@ -13,6 +13,7 @@ import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.server.HandshakeInterceptor;
 
 import java.util.Map;
+import java.util.UUID;
 
 @AllArgsConstructor
 @Slf4j
@@ -44,10 +45,10 @@ public class JwtHandshakeInterceptor implements HandshakeInterceptor {
 
         String gameId = this.extractGameId(httpRequest);
         try {
-            Long gameIdLong = Long.parseLong(gameId);
-            attributes.put("gameId", gameIdLong);
-        } catch (NumberFormatException e) {
-            log.error("Invalid gameId format: {}", gameId);
+            UUID gameIdUUID = UUID.fromString(gameId);
+            attributes.put("gameId", gameIdUUID);
+        } catch (NumberFormatException ex) {
+            log.error("Invalid gameId format: {}", gameId, ex);
             return false;
         }
         return true;

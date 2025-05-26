@@ -6,37 +6,36 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class GameCacheServiceImpl implements GameCacheService {
-    private final Cache<Long, Partida> partidaCache;
+    private final Cache<UUID, Partida> gamePartidaCache;
     private final Cache<Long, String> playerSessionCache;
 
     @Override
-    public void savePartida(Long gameId, Partida partida) {
+    public void savePartida(UUID gameId, Partida partida) {
         if (gameId == null || partida == null) {
             log.warn("Cannot cache null partida or null ID");
             return;
         }
-        partidaCache.put(gameId, partida);
+        gamePartidaCache.put(gameId, partida);
         log.debug("Cached Partida ID: {}", gameId);
     }
 
     @Override
-    public Optional<Partida> getPartida(Long gameId) {
+    public Optional<Partida> getPartida(UUID gameId) {
         if (gameId == null) return Optional.empty();
-        return Optional.ofNullable(partidaCache.getIfPresent(gameId));
+        return Optional.ofNullable(gamePartidaCache.getIfPresent(gameId));
     }
 
     @Override
-    public void removePartida(Long gameId) {
+    public void removePartida(UUID gameId) {
         if (gameId == null) return;
-        partidaCache.invalidate(gameId);
+        gamePartidaCache.invalidate(gameId);
         log.debug("Removed Partida ID: {}", gameId);
     }
 
