@@ -12,10 +12,6 @@ public interface GameCacheService {
     Optional<Partida> getPartida(Long gameId);
     void removePartida(Long gameId);
 
-    void addPlayerGame(Long playerId, Long gameId);
-    List<Long> getPlayerGames(Long playerId);
-    void removePlayerGame(Long playerId, Long gameId);
-
     void savePlayerSession(Long playerId, String sessionId);
     Optional<String> getPlayerSession(Long playerId);
     void removePlayerSession(Long playerId);
