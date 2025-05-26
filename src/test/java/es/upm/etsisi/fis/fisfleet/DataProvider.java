@@ -3,13 +3,15 @@ package es.upm.etsisi.fis.fisfleet;
 import es.upm.etsisi.fis.fisfleet.api.dto.requests.UserRequest;
 import es.upm.etsisi.fis.fisfleet.api.dto.responses.UserResponse;
 import es.upm.etsisi.fis.fisfleet.domain.entities.UserEntity;
+import lombok.experimental.UtilityClass;
+import servidor.UPMUsers;
 
 import java.time.Instant;
 import java.util.List;
 
-import servidor.UPMUsers;
-
+@UtilityClass
 public class DataProvider {
+
     public static List<UserRequest> userRequestListMock() {
         return List.of(
                 UserRequest.builder()
@@ -34,7 +36,8 @@ public class DataProvider {
                         .build()
         );
     }
-    public static List<UserResponse> userResponseListMock(){
+
+    public static List<UserResponse> userResponseListMock() {
         return List.of(
                 UserResponse.builder()
                         .id(1L)
@@ -56,8 +59,8 @@ public class DataProvider {
                         .build()
         );
     }
-    UserEntity userEntity = new UserEntity();
-    public static List<UserEntity> UserEntityListMock() {
+
+    public static List<UserEntity> userEntityListMock() {
         return List.of(
                 UserEntity.builder()
                         .usernameHash("hash1XYZ")
@@ -79,6 +82,7 @@ public class DataProvider {
                         .build()
         );
     }
+
     public static UserEntity userEntityMock() {
         return UserEntity.builder()
                 .usernameHash("hash2ABC")
