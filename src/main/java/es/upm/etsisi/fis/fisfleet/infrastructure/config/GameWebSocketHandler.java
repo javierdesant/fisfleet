@@ -1,11 +1,12 @@
 package es.upm.etsisi.fis.fisfleet.infrastructure.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import es.upm.etsisi.fis.fisfleet.api.dto.GameViewDTO;
+import es.upm.etsisi.fis.fisfleet.api.dto.SpecialAbility;
 import es.upm.etsisi.fis.fisfleet.api.dto.requests.MoveRequest;
 import es.upm.etsisi.fis.fisfleet.infrastructure.cache.GameCacheService;
-import es.upm.etsisi.fis.fisfleet.infrastructure.services.AuthenticationService;
 import es.upm.etsisi.fis.fisfleet.infrastructure.services.GameResultService;
-import es.upm.etsisi.fis.fisfleet.infrastructure.services.GameService;
+import es.upm.etsisi.fis.model.Nave;
 import es.upm.etsisi.fis.model.Partida;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
@@ -30,9 +31,7 @@ import java.util.concurrent.CopyOnWriteArraySet;
 @RequiredArgsConstructor
 public class GameWebSocketHandler extends TextWebSocketHandler {
     private final ObjectMapper objectMapper = new ObjectMapper();
-    private final AuthenticationService authenticationService;
     private final GameCacheService gameCacheService;
-    private final GameService gameService;
     private final GameResultService gameResultService;
 
     private Set<WebSocketSession> sessions;
@@ -93,97 +92,95 @@ public class GameWebSocketHandler extends TextWebSocketHandler {
     }
 
     @Override
-    public void handleTextMessage(@NonNull WebSocketSession session, @NonNull TextMessage message) throws Exception {
-        try {
-            MoveRequest request = objectMapper.readValue(message.getPayload(), MoveRequest.class);
+    protected void handleTextMessage(@NonNull WebSocketSession session, @NonNull TextMessage message) throws Exception {
 
-            UserDetails loggedInUser = authenticationService.findLoggedInUser();
-            assert loggedInUser.getUsername() != null;
+        // FIXME: integrate with HumanPlayer and MoveRequestWaiter classes
 
-            if (loggedInUser.equals(session.getPrincipal())) {
-                this.processMoveRequest(session, request);
-            } else {
-                throw new SecurityException("User is not in the game or session does not belong to the logged-in user.");
-            }
+        MoveRequest request = objectMapper.readValue(message.getPayload(), MoveRequest.class);
+        Long playerId = getPlayerId(session.getPrincipal());
 
-        } catch (Exception e) {
-            log.error("Error processing message", e);
-            this.sendErrorMessage(session, "Error processing your request: " + e.getMessage());
-        }
-    }
+        Partida partida = gameCacheService.getPartida(playerId)
+                .orElseThrow(() -> new IllegalStateException("Game not found"));
 
-
-    private void processMoveRequest(WebSocketSession session, MoveRequest request) {
-        if (!gameService.validateMove(request)) {
-            this.sendErrorMessage(session, "Invalid move. Please check the game rules and try again.");
+        if (!partida.getTurnoName().equals(playerId.toString())) {
+            session.sendMessage(new TextMessage("No es tu turno"));
+            return;
         }
 
-//       TODO!: implement a Partida.class cache in GameCacheService
-//        GameStateDTO updatedState = switch (request.getSpecialAbility()) {
-//            case COUNTER_ATTACK -> gameService.performCounterAttack(request);
-//            case ARTILLERY_ATTACK -> gameService.launchArtilleryAttack(request);
-//            case REPAIR -> gameService.repairSubmarine(request.getGameId(), request.getPlayerId());
-//            case REVEAL_ROW ->
-//                    gameService.revealRow(request.getGameId(), request.getPlayerId(), request.getCoordinateY());
-//            case NONE -> gameService.performAttack(request);
-//        };
-//        this.sendGameViewToPlayer(updatedState.getPlayer1Id(), gameId);
-//        this.sendGameViewToPlayer(updatedState.getPlayer2Id(), gameId);
-//        log.debug("Processed move for game: {} by player: {}", gameId, playerId);
-    }
+        // Procesar movimiento principal
+        HashMap<String, Object> salidaHash = partida.aplicaTurno();
 
-    @Override
-    public void afterConnectionClosed(@NonNull WebSocketSession session, @NonNull CloseStatus status) throws Exception {
-        sessions.remove(session);
+//        TODO: Procesar habilidad especial para jugador humano
+//         this.procesarHabilidadEspecial(partida, request, salidaHash);
 
-        Long playerId = this.getLoggedInUserId();
+        // Gestionar fin de partida y turnos
+        this.gestionarEstadoPartida(partida, playerId);
 
-        if (playerId != null) {
-            gameCacheService.removePlayerSession(playerId);
-            log.info("Closed connection: {} for player: {}", session.getId(), playerId);
+
+        if (session.getAttributes().get("gameType").equals("pve")) {
+//            this.procesarHabilidadEspecial(partida, request, salidaHash);
+            partida.aplicaTurno();
+            this.gestionarEstadoPartida(partida, playerId);
+            this.enviarVista(partida, Long.valueOf(partida.getTurnoName()), salidaHash);
+        } else if (session.getAttributes().get("gameType").equals("pvp")) {
+            this.enviarVista(partida, playerId, salidaHash);
         } else {
-            log.info("Closed connection: {} (player ID not available)", session.getId());
+            throw new IllegalStateException("Invalid game type");
+        }
+
+    }
+
+//    private void procesarHabilidadEspecial(Partida partida, MoveRequest request, HashMap<String, Object> salidaHash) {
+//        if (request.isSpecialAbility()) {
+//            Nave ultimaTocada = (Nave) salidaHash.get("Nave");
+//            if (ultimaTocada != null) {
+//                ultimaTocada.accionComplementaria(partida);
+//                salidaHash.put("HabilidadEspecial", true);
+//            }
+//        }
+//    }
+
+    private void gestionarEstadoPartida(Partida partida, Long playerId) {
+        if (partida.fin()) {
+            partida.setfin();
+            gameResultService.persistFinished(partida);
+            gameCacheService.removePartida(playerId);
+        } else {
+            partida.swapTurn();
+            gameCacheService.savePartida(playerId, partida);
         }
     }
 
-    private void sendGameViewToPlayer(Long playerId, Long gameId) {
-        String sessionId = gameCacheService.getPlayerSession(playerId)
-                .orElseThrow(() -> {
-                    log.warn("No session found for player: {}", playerId);
-                    return new IllegalStateException("No session found for player: " + playerId);
-                });
+    private void enviarVista(Partida partida, Long lastPlayerId, HashMap<String, Object> salidaHash) {
+        Long opponentId = Long.valueOf(partida.getTurnoName());
+        assert !opponentId.equals(lastPlayerId);
 
-        Optional<WebSocketSession> optionalSession = this.findSessionById(sessionId);
+        Nave ultimaTocada = (Nave) salidaHash.get("Nave");
+        SpecialAbility availableAbility = SpecialAbility.fromShipName(ultimaTocada.getName());
+        char[][] board = partida.getTableros().get(0);
+        char[][] boardMasked = partida.getTableros().get(1);
 
-        optionalSession.ifPresent(session -> {
+        GameViewDTO opponentView = GameViewDTO.builder()
+                        .availableAbility(availableAbility)
+                        .ownBoard(board)
+                        .enemyBoardMasked(boardMasked)
+                        .build();
+
+        this.sendView(opponentId, opponentView);
+    }
+
+    private void sendView(Long userId, GameViewDTO gameView) {
+        gameCacheService.getPlayerSession(userId).flatMap(this::findSessionById).ifPresent(session -> {
             try {
-                GameViewDTO gameView = gameService.getGameViewForPlayer(gameId, playerId);
-
-                String jsonView = objectMapper.writeValueAsString(gameView);
-                session.sendMessage(new TextMessage(jsonView));
-
-                log.debug("Sent game view to player: {}", playerId);
+                session.sendMessage(new TextMessage(objectMapper.writeValueAsString(gameView)));
             } catch (IOException ex) {
-                log.error("Error sending game view to player: {}. SessionId: {}", playerId, sessionId, ex);
+                log.error("Failed to send view to player {}", userId, ex);
             }
         });
     }
 
     private Optional<WebSocketSession> findSessionById(String sessionId) {
-        return sessions.stream()
-                .filter(session -> session.getId().equals(sessionId))
-                .findFirst();
-    }
-
-    private void sendErrorMessage(WebSocketSession session, String errorMessage) {
-        try {
-            if (session.isOpen()) {
-                session.sendMessage(new TextMessage("{\"error\": \"" + errorMessage + "\"}"));
-            }
-        } catch (Exception ex) {
-            log.error("Error sending error message: {}", ex.getMessage() , ex);
-            throw new RuntimeException("Error sending error message", ex);
-        }
+        return sessions.stream().filter(session -> session.getId().equals(sessionId)).findFirst();
     }
 
     @Override
