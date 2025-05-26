@@ -9,8 +9,6 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
-import java.util.ArrayList;
-import java.util.HashMap;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -36,17 +34,8 @@ public class MachineEntity extends PlayerEntity {
     @Column(name = "dificultad", nullable = false, length = 20)
     private TDificultad difficulty;
 
-    @Builder.Default
-    @Transient
-    private Maquina maquina = FactoriaMaquina.creaMaquina(difficulty.toString());
-
     @Override
-    public int[] realizaTurno(char[][] chars) {
-        return maquina.realizaTurno(chars);
-    }
-
-    @Override
-    public boolean aceptarAccionComplementaria(TBarcoAccionComplementaria tBarcoAccionComplementaria, int cantidadDisponible) {
-        return maquina.aceptarAccionComplementaria(tBarcoAccionComplementaria, cantidadDisponible);
+    protected void initPlayer() {
+        this.setPlayer(FactoriaMaquina.creaMaquina(difficulty.toString()));
     }
 }

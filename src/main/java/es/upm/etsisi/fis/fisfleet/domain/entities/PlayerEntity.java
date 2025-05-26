@@ -16,7 +16,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-@NoArgsConstructor
 @Data
 @SuperBuilder
 @Entity
@@ -47,6 +46,37 @@ public abstract class PlayerEntity implements Serializable, IJugador {
     @Builder.Default
     @OneToMany(mappedBy = "player")
     private Set<ScoreEntity> scores = new LinkedHashSet<>();
+
+    @Transient
+    private IJugador player;
+
+    protected PlayerEntity() {
+        this.initPlayer();
+    }
+
+    @Builder.Default
+    @Transient
+    private final boolean __init = initialize();
+
+    private boolean initialize() {
+        this.initPlayer();
+        return true;
+    }
+
+    @PostLoad
+    @PostPersist
+    @PostUpdate
+    protected abstract void initPlayer();
+
+    @Override
+    public boolean aceptarAccionComplementaria(TBarcoAccionComplementaria tBarcoAccionComplementaria, int cantidadDisponible) {
+        return player.aceptarAccionComplementaria(tBarcoAccionComplementaria, cantidadDisponible);
+    }
+
+    @Override
+    public int[] realizaTurno(char[][] chars) {
+        return player.realizaTurno(chars);
+    }
 
     @Builder.Default
     @Transient
