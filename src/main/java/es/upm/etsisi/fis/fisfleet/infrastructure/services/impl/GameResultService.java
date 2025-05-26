@@ -7,12 +7,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Transactional
 @Service
 @RequiredArgsConstructor
 public class GameResultService {
     private final GameResultRepository repo;
 
-    @Transactional
     public void persistFinished(Partida partida) {
         assert partida.fin();
 
@@ -28,6 +28,7 @@ public class GameResultService {
         return null;
     }
 
+    // TODO
     public void delete(Long gameId) {
 
     }
