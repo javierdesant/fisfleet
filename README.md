@@ -111,11 +111,12 @@ fisfleet/
 ### 😎Diagrama de componentes:
 Generado utilizando los componentes arquitectónicos y sus relaciones a través de las interfaces.
 
-![Diagrama](docs/uml/Diagrama de componentes.jpg)
+![Diagrama](docs/Diagrama de componentes.jpg)
 
 ### 😎Diagrama de despliegue:
 Representa la implantación del sistema.
 
+![Diagrama](docs/Diagrama de despliegue.jpg)
 
 ## ⚙️ Configuración y Ejecución
 
