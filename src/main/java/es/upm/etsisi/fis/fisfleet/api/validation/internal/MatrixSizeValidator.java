@@ -1,5 +1,6 @@
-package es.upm.etsisi.fis.fisfleet.api.validation;
+package es.upm.etsisi.fis.fisfleet.api.validation.internal;
 
+import es.upm.etsisi.fis.fisfleet.api.validation.ValidMatrixSize;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
