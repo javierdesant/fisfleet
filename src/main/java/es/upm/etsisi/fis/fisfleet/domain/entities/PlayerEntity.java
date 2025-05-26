@@ -4,6 +4,7 @@ import es.upm.etsisi.fis.model.IJugador;
 import es.upm.etsisi.fis.model.IMovimiento;
 import es.upm.etsisi.fis.model.IPuntuacion;
 import es.upm.etsisi.fis.model.TBarcoAccionComplementaria;
+import jakarta.annotation.PostConstruct;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Data;
@@ -55,7 +56,13 @@ public abstract class PlayerEntity implements Serializable, IJugador {
 
     @Builder.Default
     @Transient
-    private final boolean __init = initialize();
+    private boolean __init = false;
+
+    @PostConstruct
+    private void postConstructInit() {
+        this.__init = initialize();
+    }
+
 
     private boolean initialize() {
         this.init();
