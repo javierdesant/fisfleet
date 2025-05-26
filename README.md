@@ -137,6 +137,7 @@ cp .env .env
 
 ```bash
 mvn clean install
+mvn compile
 ```
 
 #### Frontend (React)
