@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import type { FieldErrors } from "react-hook-form";
 import LoginForm, { type LoginFormValues } from "./LoginForm";
 import EnvelopeIcon from "./icons/EnvelopeIcon";
+import { login } from "app/hooks/authService";
 
 export const meta: Route.MetaFunction = () => {
   return [
@@ -15,10 +16,20 @@ export default function LoginPage() {
 
   const [showSuccess, setShowSuccess] = useState(false);
 
-  const onSubmit = () => {
+const onSubmit = async (data: LoginFormValues) => {
+  try {
+    const response = await login(data.username, data.password);
+    localStorage.setItem("jwt", response.jwt);
     setShowSuccess(true);
-    setTimeout(() => setShowSuccess(false), 3000); // Popup será visible por 3 segundos
-  };
+    // Redirige o actualiza estado de usuario autenticado aquí
+  } catch (e) {
+    if (e instanceof Error) {
+      alert("Login fallido: " + e.message);
+    } else {
+      alert("Login fallido: Error desconocido");
+    }
+  }
+};
 
   const onError = (errors: FieldErrors<LoginFormValues>) => {
     if (errors.username?.message)
@@ -51,9 +62,7 @@ export default function LoginPage() {
           </div>
         )}
 
-        <div className="w-full flex-1 px-6">
-          <LoginForm onSubmit={onSubmit} onError={onError} />
-        </div>
+        <LoginForm onSubmit={onSubmit} onError={onError} />
       </div>
     </section>
   );

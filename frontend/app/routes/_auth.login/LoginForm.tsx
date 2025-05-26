@@ -14,72 +14,65 @@ interface LoginFormProps {
 }
 
 export default function LoginForm({ onSubmit, onError }: LoginFormProps) {
-  const { register, handleSubmit, formState } = useForm<LoginFormValues>({
-    defaultValues: {
-      username: "",
-      password: "",
-    },
+  const { register, handleSubmit, formState: { errors } } = useForm<LoginFormValues>({
+    defaultValues: { username: "", password: "" },
   });
-
-  const { errors } = formState;
 
   return (
     <form
       onSubmit={handleSubmit(onSubmit, onError)}
-      className="space-y-6 p-6 sm:p-8 md:p-10 lg:p-12"
+      className="flex flex-col gap-6 p-8 bg-white dark:bg-oxford_blue-500 rounded-xl shadow-2xl w-full"
       noValidate
     >
+      <h2 className="text-2xl font-bold text-center text-blue-800 dark:text-blue-200 mb-2 mt-10">Iniciar sesión</h2>
+      <p className="text-center text-gray-500 dark:text-gray-300 mb-4">Accede con tu cuenta UPM</p>
       <div>
+        <label htmlFor="username" className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
+          Usuario
+        </label>
         <div className="relative">
-          <div className="absolute inset-y-0 left-3 flex items-center">
+          <span className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
             <UserIcon />
-          </div>
+          </span>
           <input
             id="username"
             type="text"
-            className={`w-full rounded bg-gray-200 py-3 pr-4 pl-12 text-sm focus:ring focus:ring-blue-500 focus:outline-none md:text-base lg:py-4 lg:text-lg ${
-              errors.username ? "border-red-500" : "border-gray-300"
-            }`}
-            placeholder="Username"
-            {...register("username", {
-              required: "Username is required",
-            })}
+            autoComplete="username"
+            className={`w-full rounded-lg bg-gray-100 dark:bg-gray-800 py-3 pr-4 pl-12 text-base focus:ring-2 focus:ring-blue-500 focus:outline-none border ${errors.username ? "border-red-500" : "border-gray-300"}`}
+            placeholder="Usuario UPM"
+            {...register("username", { required: "Usuario requerido" })}
           />
         </div>
         {errors.username && (
-          <span className="mt-1 block text-sm text-red-500">
-            {errors.username.message}
-          </span>
+          <span className="mt-1 block text-sm text-red-500">{errors.username.message}</span>
         )}
       </div>
       <div>
+        <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
+          Contraseña
+        </label>
         <div className="relative">
-          <div className="absolute inset-y-0 left-3 flex items-center">
+          <span className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
             <LockIcon />
-          </div>
+          </span>
           <input
             id="password"
             type="password"
-            className={`w-full rounded bg-gray-200 py-3 pr-4 pl-12 text-sm focus:ring focus:ring-blue-500 focus:outline-none md:text-base lg:py-4 lg:text-lg ${
-              errors.password ? "border-red-500" : "border-gray-300"
-            }`}
-            placeholder="Password"
-            {...register("password", {
-              required: "Password is required",
-            })}
+            autoComplete="current-password"
+            className={`w-full rounded-lg bg-gray-100 dark:bg-gray-800 py-3 pr-4 pl-12 text-base focus:ring-2 focus:ring-blue-500 focus:outline-none border ${errors.password ? "border-red-500" : "border-gray-300"}`}
+            placeholder="Contraseña"
+            {...register("password", { required: "Contraseña requerida" })}
           />
         </div>
         {errors.password && (
-          <span className="mt-1 block text-sm text-red-500">
-            {errors.password.message}
-          </span>
+          <span className="mt-1 block text-sm text-red-500">{errors.password.message}</span>
         )}
       </div>
       <button
         type="submit"
-        className="w-full rounded bg-gradient-to-b from-blue-500 to-blue-700 py-3 text-sm font-medium text-white uppercase hover:opacity-90 focus:ring focus:ring-blue-500 focus:outline-none lg:py-4 lg:text-base dark:from-gray-700 dark:to-gray-900"
+        className="w-full rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 text-lg transition"
       >
-        Login
+        Entrar
       </button>
     </form>
   );
