@@ -39,6 +39,9 @@ public class JwtHandshakeInterceptor implements HandshakeInterceptor {
 
         this.validateTokenWebsocket(httpRequest, request);
 
+        String gameType = this.extractGameType(httpRequest);
+        attributes.put("gameType", gameType);
+
         String gameId = this.extractGameId(httpRequest);
         try {
             Long gameIdLong = Long.parseLong(gameId);
@@ -52,8 +55,22 @@ public class JwtHandshakeInterceptor implements HandshakeInterceptor {
 
     private String extractGameId(HttpServletRequest request) {
         String gameId = request.getParameter("gameId");
+
+        if (gameId == null || gameId.isEmpty()) {
+            throw new SecurityException("Game ID not provided");
+        }
         log.debug("Extracted gameId: {} from request parameters", gameId);
         return gameId;
+    }
+
+    private String extractGameType(HttpServletRequest request) {
+        String path = request.getRequestURI();
+        if (path.contains("/pve/")) {
+            return "PvE";
+        } else if (path.contains("/pvp/")) {
+            return "PvP";
+        }
+        throw new SecurityException("Invalid game type in path");
     }
 
     private void validateTokenWebsocket(HttpServletRequest request, ServerHttpRequest originalRequest) {
