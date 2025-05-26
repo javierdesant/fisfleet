@@ -1,13 +1,8 @@
 package es.upm.etsisi.fis.fisfleet.infrastructure.controllers;
 
-import es.upm.etsisi.fis.controller.ControladorPartida;
-import es.upm.etsisi.fis.fisfleet.infrastructure.adapters.VistaControladoraPartidaExt;
 import es.upm.etsisi.fis.fisfleet.infrastructure.services.MatchmakingService;
-import es.upm.etsisi.fis.fisfleet.infrastructure.services.UserService;
 import es.upm.etsisi.fis.model.TDificultad;
 import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
