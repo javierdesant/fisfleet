@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import es.upm.etsisi.fis.fisfleet.DataProvider;
 import es.upm.etsisi.fis.fisfleet.api.dto.requests.UserRequest;
 import es.upm.etsisi.fis.fisfleet.domain.entities.UserEntity;
+import es.upm.etsisi.fis.fisfleet.infrastructure.config.security.UserSecurity;
 import es.upm.etsisi.fis.fisfleet.infrastructure.services.UserService;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Test;
@@ -36,6 +37,9 @@ class UserControllerTest {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private UserSecurity userSecurity;
+
     @TestConfiguration
     static class MockConfig {
         @Bean
@@ -43,10 +47,15 @@ class UserControllerTest {
         public UserService userService() {
             return Mockito.mock(UserService.class);
         }
+
+        @Bean
+        @Primary
+        public UserSecurity userSecurity() {
+            return Mockito.mock(UserSecurity.class);
+        }
     }
 
-    // POST /api/users
-    @WithMockUser
+    // POST /api/users - sin seguridad
     @Test
     void testCreateUser_success() throws Exception {
         UserRequest request = DataProvider.userRequestListMock().get(0);
@@ -63,12 +72,11 @@ class UserControllerTest {
                 .andExpect(jsonPath("$.alias").value(createdUser.getAlias()));
     }
 
-    @WithMockUser
     @Test
     void testCreateUser_validationError() throws Exception {
         UserRequest invalidRequest = UserRequest.builder()
                 .username("invalid@upm.es")
-                .alias("") // Alias vacío
+                .alias("")
                 .password("password123")
                 .build();
 
@@ -79,9 +87,9 @@ class UserControllerTest {
     }
 
     // GET /api/users/{id}
-    @WithMockUser
+    @WithMockUser(authorities = "MANAGE_USERS")
     @Test
-    void testGetUserById_success() throws Exception {
+    void testGetUserById_withAuthority_success() throws Exception {
         Long userId = 1L;
         UserEntity user = DataProvider.userEntityMock();
         user.setId(userId);
@@ -94,7 +102,35 @@ class UserControllerTest {
                 .andExpect(jsonPath("$.alias").value(user.getAlias()));
     }
 
-    @WithMockUser
+    @WithMockUser(username = "ownerHash")
+    @Test
+    void testGetUserById_asSelf_success() throws Exception {
+        Long userId = 1L;
+        UserEntity user = DataProvider.userEntityMock();
+        user.setId(userId);
+        user.setUsernameHash("ownerHash");
+
+        Mockito.when(userService.read(userId)).thenReturn(user);
+        Mockito.when(userSecurity.isSelf(userId)).thenReturn(true);
+
+        mockMvc.perform(get("/api/users/{id}", userId))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.usernameHash").value(user.getUsernameHash()))
+                .andExpect(jsonPath("$.alias").value(user.getAlias()));
+    }
+
+    @WithMockUser(username = "intruder")
+    @Test
+    void testGetUserById_forbidden() throws Exception {
+        Long userId = 1L;
+
+        Mockito.when(userSecurity.isSelf(userId)).thenReturn(false);
+
+        mockMvc.perform(get("/api/users/{id}", userId))
+                .andExpect(status().isForbidden());
+    }
+
+    @WithMockUser(authorities = "MANAGE_USERS")
     @Test
     void testGetUserById_notFound() throws Exception {
         Long userId = 999L;
@@ -106,12 +142,11 @@ class UserControllerTest {
     }
 
     // PUT /api/users/{id}
-    @WithMockUser
+    @WithMockUser(authorities = "MANAGE_USERS")
     @Test
-    void testUpdateUser_success() throws Exception {
+    void testUpdateUser_withAuthority_success() throws Exception {
         Long userId = 1L;
-        // Usa un usuario que pase validación
-        UserRequest request = DataProvider.userRequestListMock().get(0);  // test1.user@alumnos.upm.es
+        UserRequest request = DataProvider.userRequestListMock().get(0);
         UserEntity updatedUser = DataProvider.userEntityMock();
         updatedUser.setId(userId);
         updatedUser.setAlias("UpdatedAlias");
@@ -122,16 +157,47 @@ class UserControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.usernameHash").value(updatedUser.getUsernameHash()))
                 .andExpect(jsonPath("$.alias").value("UpdatedAlias"));
     }
 
-    @WithMockUser
+    @WithMockUser(username = "ownerHash")
+    @Test
+    void testUpdateUser_asSelf_success() throws Exception {
+        Long userId = 1L;
+        UserRequest request = DataProvider.userRequestListMock().get(0);
+        UserEntity updatedUser = DataProvider.userEntityMock();
+        updatedUser.setId(userId);
+        updatedUser.setAlias("UpdatedAlias");
+
+        Mockito.when(userSecurity.isSelf(userId)).thenReturn(true);
+        Mockito.when(userService.update(any(UserRequest.class), eq(userId))).thenReturn(updatedUser);
+
+        mockMvc.perform(put("/api/users/{id}", userId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.alias").value("UpdatedAlias"));
+    }
+
+    @WithMockUser(username = "intruder")
+    @Test
+    void testUpdateUser_forbidden() throws Exception {
+        Long userId = 1L;
+        UserRequest request = DataProvider.userRequestListMock().get(0);
+
+        Mockito.when(userSecurity.isSelf(userId)).thenReturn(false);
+
+        mockMvc.perform(put("/api/users/{id}", userId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isForbidden());
+    }
+
+    @WithMockUser(authorities = "MANAGE_USERS")
     @Test
     void testUpdateUser_notFound() throws Exception {
         Long userId = 999L;
-        // Usa también un request válido
-        UserRequest request = DataProvider.userRequestListMock().get(0);  // test1.user@alumnos.upm.es
+        UserRequest request = DataProvider.userRequestListMock().get(0);
 
         Mockito.when(userService.update(any(UserRequest.class), eq(userId)))
                 .thenThrow(new EntityNotFoundException("User not found"));
@@ -142,11 +208,10 @@ class UserControllerTest {
                 .andExpect(status().isNotFound());
     }
 
-
     // DELETE /api/users/{id}
-    @WithMockUser
+    @WithMockUser(authorities = "MANAGE_USERS")
     @Test
-    void testDeleteUser_success() throws Exception {
+    void testDeleteUser_withAuthority_success() throws Exception {
         Long userId = 1L;
 
         Mockito.doNothing().when(userService).delete(userId);
@@ -155,7 +220,30 @@ class UserControllerTest {
                 .andExpect(status().isNoContent());
     }
 
-    @WithMockUser
+    @WithMockUser(username = "ownerHash")
+    @Test
+    void testDeleteUser_asSelf_success() throws Exception {
+        Long userId = 1L;
+
+        Mockito.when(userSecurity.isSelf(userId)).thenReturn(true);
+        Mockito.doNothing().when(userService).delete(userId);
+
+        mockMvc.perform(delete("/api/users/{id}", userId))
+                .andExpect(status().isNoContent());
+    }
+
+    @WithMockUser(username = "intruder")
+    @Test
+    void testDeleteUser_forbidden() throws Exception {
+        Long userId = 1L;
+
+        Mockito.when(userSecurity.isSelf(userId)).thenReturn(false);
+
+        mockMvc.perform(delete("/api/users/{id}", userId))
+                .andExpect(status().isForbidden());
+    }
+
+    @WithMockUser(authorities = "MANAGE_USERS")
     @Test
     void testDeleteUser_notFound() throws Exception {
         Long userId = 999L;
