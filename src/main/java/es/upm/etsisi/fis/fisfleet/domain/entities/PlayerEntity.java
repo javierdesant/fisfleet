@@ -7,7 +7,6 @@ import es.upm.etsisi.fis.model.TBarcoAccionComplementaria;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
@@ -16,7 +15,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-@NoArgsConstructor
 @Data
 @SuperBuilder
 @Entity
@@ -48,26 +46,40 @@ public abstract class PlayerEntity implements Serializable, IJugador {
     @OneToMany(mappedBy = "player")
     private Set<ScoreEntity> scores = new LinkedHashSet<>();
 
+    @Transient
+    private IJugador player;
+
+    protected PlayerEntity() {
+        this.init();
+    }
+
+    @Builder.Default
+    @Transient
+    private final boolean __init = initialize();
+
+    private boolean initialize() {
+        this.init();
+        return true;
+    }
+
+    @PostLoad
+    @PostPersist
+    @PostUpdate
+    protected abstract void init();
+
     @Override
     public boolean aceptarAccionComplementaria(TBarcoAccionComplementaria tBarcoAccionComplementaria, int cantidadDisponible) {
-        return cantidadDisponible>0;
+        return player.aceptarAccionComplementaria(tBarcoAccionComplementaria, cantidadDisponible);
+    }
+
+    @Override
+    public int[] realizaTurno(char[][] chars) {
+        return player.realizaTurno(chars);
     }
 
     @Builder.Default
     @Transient
     private int moveIndex = 0;
-
-    @Override
-    public int[] realizaTurno(char[][] chars) {
-        List<MoveEntity> orderedMoves = this.getMoves().stream().toList();
-
-        if (moveIndex < orderedMoves.size()) {
-            MoveEntity move = orderedMoves.get(moveIndex++);
-            return new int[] { move.getCoordinateX(), move.getCoordinateY() };
-        }
-
-        return new int[]{-1, -1};
-    }
 
     @Override
     public void addMovimiento(IMovimiento movIn) {
@@ -91,5 +103,10 @@ public abstract class PlayerEntity implements Serializable, IJugador {
     @Override
     public List<IPuntuacion> getPuntuaciones() {
         return new ArrayList<>(scores);
+    }
+
+    @Override
+    public String getNombre() {
+        return this.getId().toString();
     }
 }

@@ -1,7 +1,7 @@
 package es.upm.etsisi.fis.fisfleet.infrastructure.config.security.filter;
 
 import es.upm.etsisi.fis.fisfleet.domain.repositories.UserRepository;
-import es.upm.etsisi.fis.fisfleet.infrastructure.services.JwtService;
+import es.upm.etsisi.fis.fisfleet.infrastructure.services.impl.JwtService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

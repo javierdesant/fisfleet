@@ -26,6 +26,5 @@ public class MoveRequest {
     private Integer coordinateY;
 
     @Builder.Default
-    @NotNull(message = "The special ability enum cannot be empty.")
-    private SpecialAbility specialAbility = SpecialAbility.NONE;
+    private boolean specialAbility = false;
 }

@@ -1,6 +1,7 @@
-package es.upm.etsisi.fis.fisfleet.api.validation;
+package es.upm.etsisi.fis.fisfleet.api.validation.internal;
 
 import es.upm.etsisi.fis.fisfleet.api.dto.requests.GameResultRequest;
+import es.upm.etsisi.fis.fisfleet.api.validation.ValidWinnerId;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 

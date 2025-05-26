@@ -122,7 +122,7 @@ cd fisfleet
 Copia el archivo de ejemplo y edítalo según tu entorno:
 
 ```bash
-cp .env.example .env
+cp .env .env
 ```
 
 *Edita .env con tus credenciales y configuración preferida*
