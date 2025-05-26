@@ -24,14 +24,14 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAuthority('MANAGE_USERS') or authentication.token")
+    @PreAuthorize("hasAuthority('MANAGE_USERS') or @userSecurity.isSelf(#id)")
     public ResponseEntity<UserEntity> getUserById(@PathVariable Long id) {
         UserEntity user = userService.read(id);
         return ResponseEntity.ok(user);
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasAuthority('MANAGE_USERS') or principal.username == #id.toString()")
+    @PreAuthorize("hasAuthority('MANAGE_USERS') or @userSecurity.isSelf(#id)")
     public ResponseEntity<UserEntity> updateUser(
             @PathVariable Long id,
             @Valid @RequestBody UserRequest userRequest
@@ -41,7 +41,7 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAuthority('MANAGE_USERS')")
+    @PreAuthorize("hasAuthority('MANAGE_USERS') or @userSecurity.isSelf(#id)")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
         userService.delete(id);
         return ResponseEntity.noContent().build();
