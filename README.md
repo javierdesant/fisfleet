@@ -137,6 +137,12 @@ cp .env .env
 
 ```bash
 mvn clean install
+```
+
+O bien
+
+```bash
+mvn clean
 mvn compile
 ```
 
