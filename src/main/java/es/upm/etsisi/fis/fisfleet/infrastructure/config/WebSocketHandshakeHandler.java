@@ -1,4 +1,4 @@
-package es.upm.etsisi.fis.fisfleet.infrastructure.config.security;
+package es.upm.etsisi.fis.fisfleet.infrastructure.config;
 
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.lang.NonNull;
@@ -10,7 +10,7 @@ import java.security.Principal;
 import java.util.Map;
 
 @Component
-public class JwtHandshakeHandler extends DefaultHandshakeHandler {
+public class WebSocketHandshakeHandler extends DefaultHandshakeHandler {
 
     @Override
     protected Principal determineUser(@NonNull ServerHttpRequest request, @NonNull WebSocketHandler wsHandler,

@@ -29,7 +29,7 @@ import java.util.concurrent.CopyOnWriteArraySet;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class GameWebSocketHandler extends TextWebSocketHandler {
+public class WebSocketGameHandler extends TextWebSocketHandler {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final GameCacheService gameCacheService;

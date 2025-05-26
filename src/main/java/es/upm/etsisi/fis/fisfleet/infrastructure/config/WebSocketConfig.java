@@ -1,6 +1,5 @@
 package es.upm.etsisi.fis.fisfleet.infrastructure.config;
 
-import es.upm.etsisi.fis.fisfleet.infrastructure.config.security.JwtHandshakeHandler;
 import es.upm.etsisi.fis.fisfleet.infrastructure.config.security.JwtHandshakeInterceptor;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Configuration;
@@ -14,14 +13,14 @@ import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry
 public class WebSocketConfig implements WebSocketConfigurer {
 
     private JwtHandshakeInterceptor jwtInterceptor;
-    private JwtHandshakeHandler jwtHandshakeHandler;
-    private GameWebSocketHandler gameWebSocketHandler;
+    private WebSocketHandshakeHandler webSocketHandshakeHandler;
+    private WebSocketGameHandler webSocketGameHandler;
 
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-        registry.addHandler(gameWebSocketHandler, "api/ws/pve/{gameId}", "api/ws/pvp/{gameId}")
+        registry.addHandler(webSocketGameHandler, "api/ws/pve/{gameId}", "api/ws/pvp/{gameId}")
                 .addInterceptors(jwtInterceptor)
-                .setHandshakeHandler(jwtHandshakeHandler)
+                .setHandshakeHandler(webSocketHandshakeHandler)
                 .setAllowedOrigins("*");
     }
 }
