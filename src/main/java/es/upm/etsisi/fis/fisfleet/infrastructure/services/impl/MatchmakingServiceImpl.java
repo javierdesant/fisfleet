@@ -37,8 +37,7 @@ public class MatchmakingServiceImpl implements MatchmakingService {
 
     @Override
     public String queuePvpMatch(Long playerId) {
-        // TODO: Implement PvP matchmaking
-        // Podrías usar una cola simple o pairing directo
+        // TODO: Implement PvP matchmaking queue
         throw new UnsupportedOperationException("PvP matchmaking not implemented yet");
     }
 

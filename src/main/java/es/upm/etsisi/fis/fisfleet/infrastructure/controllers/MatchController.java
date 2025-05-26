@@ -4,6 +4,7 @@ import es.upm.etsisi.fis.fisfleet.infrastructure.services.MatchmakingService;
 import es.upm.etsisi.fis.model.TDificultad;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,6 +20,7 @@ public class MatchController {
     private final MatchmakingService matchmakingService;
 
     @PostMapping("/pve")
+    @PreAuthorize("hasAuthority('PLAY_GAME')")
     public ResponseEntity<String> startPveMatch(@AuthenticationPrincipal UserDetails userDetails,
                                                 @RequestParam(name = "difficulty", defaultValue = "NORMAL") TDificultad difficulty) {
         Long playerId = Long.parseLong(userDetails.getUsername());
@@ -27,6 +29,7 @@ public class MatchController {
     }
 
     @PostMapping("/pvp")
+    @PreAuthorize("hasAuthority('PLAY_GAME')")
     public ResponseEntity<String> queueForPvp(@AuthenticationPrincipal UserDetails userDetails) {
         Long playerId = Long.parseLong(userDetails.getUsername());
         String partidaId = matchmakingService.queuePvpMatch(playerId);
