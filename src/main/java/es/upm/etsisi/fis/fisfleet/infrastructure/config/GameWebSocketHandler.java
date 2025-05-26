@@ -30,20 +30,12 @@ import java.util.concurrent.CopyOnWriteArraySet;
 @Component
 @RequiredArgsConstructor
 public class GameWebSocketHandler extends TextWebSocketHandler {
+
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final GameCacheService gameCacheService;
     private final GameResultService gameResultService;
 
     private Set<WebSocketSession> sessions;
-
-    private static Long getPlayerId(Principal principal) {
-        if (principal instanceof UsernamePasswordAuthenticationToken) {
-            return Long.parseLong(principal.getName());
-        } else {
-            log.error("Invalid principal: {}", principal);
-            throw new IllegalStateException("Invalid principal");
-        }
-    }
 
     @PostConstruct
     public void init() {
@@ -51,44 +43,49 @@ public class GameWebSocketHandler extends TextWebSocketHandler {
     }
 
     @Override
-    public void afterConnectionEstablished(@NonNull WebSocketSession newSession) {
-        Long playerId = getPlayerId(newSession.getPrincipal());
-
-        this.disconnectExistingSessionIfPresent(playerId);
-
-        this.registerNewSession(playerId, newSession);
-        log.info("New session established: {}", newSession.getId());
+    public void afterConnectionEstablished(@NonNull WebSocketSession session) {
+        Long playerId = this.extractPlayerId(session);
+        this.disconnectIfExists(playerId);
+        this.registerSession(playerId, session);
+        log.info("New session established: {}", session.getId());
     }
 
-    private void disconnectExistingSessionIfPresent(Long playerId) {
-        gameCacheService.getPlayerSession(playerId).ifPresent(existingSessionId -> {
-            this.findOpenSession(existingSessionId).ifPresent(this::disconnectSession);
+    private Long extractPlayerId(WebSocketSession session) {
+        return getPlayerId(session.getPrincipal());
+    }
+
+    private static Long getPlayerId(Principal principal) {
+        if (principal instanceof UsernamePasswordAuthenticationToken) {
+            return Long.parseLong(principal.getName());
+        }
+        log.error("Invalid principal: {}", principal);
+        throw new IllegalStateException("Invalid principal");
+    }
+
+    private void disconnectIfExists(Long playerId) {
+        gameCacheService.getPlayerSession(playerId).ifPresent(sessionId -> {
+            this.findSessionById(sessionId).ifPresent(this::disconnectSession);
             gameCacheService.removePlayerSession(playerId);
         });
     }
 
-    private Optional<WebSocketSession> findOpenSession(String sessionId) {
-        return sessions.stream()
-                .filter(s -> s.getId().equals(sessionId) && s.isOpen())
-                .findFirst();
-    }
-
     private void disconnectSession(WebSocketSession session) {
         try {
-            String DISCONNECT_MESSAGE = "You have been disconnected because you logged in from another device";
-
-            session.sendMessage(new TextMessage(DISCONNECT_MESSAGE));
-            session.close(CloseStatus.NORMAL.withReason(DISCONNECT_MESSAGE));
-            sessions.remove(session);
+            String msg = "You have been disconnected because you logged in from another device";
+            session.sendMessage(new TextMessage(msg));
+            session.close(CloseStatus.NORMAL.withReason(msg));
             log.warn("Previous session closed: {}", session.getId());
         } catch (IOException e) {
             log.error("Error closing previous session: {}", session.getId(), e);
+        } finally {
+            sessions.remove(session);
+            log.warn("Previous session removed: {}", session.getId());
         }
     }
 
-    private void registerNewSession(Long playerId, WebSocketSession newSession) {
-        sessions.add(newSession);
-        gameCacheService.savePlayerSession(playerId, newSession.getId());
+    private void registerSession(Long playerId, WebSocketSession session) {
+        sessions.add(session);
+        gameCacheService.savePlayerSession(playerId, session.getId());
     }
 
     @Override
@@ -97,48 +94,37 @@ public class GameWebSocketHandler extends TextWebSocketHandler {
         // FIXME: integrate with HumanPlayer and MoveRequestWaiter classes
 
         MoveRequest request = objectMapper.readValue(message.getPayload(), MoveRequest.class);
-        Long playerId = getPlayerId(session.getPrincipal());
-
-        Partida partida = gameCacheService.getPartida(playerId)
-                .orElseThrow(() -> new IllegalStateException("Game not found"));
+        Long playerId = this.extractPlayerId(session);
+        Partida partida = this.getPartidaOrThrow(playerId);
 
         if (!partida.getTurnoName().equals(playerId.toString())) {
             session.sendMessage(new TextMessage("No es tu turno"));
             return;
         }
 
-        // Procesar movimiento principal
-        HashMap<String, Object> salidaHash = partida.aplicaTurno();
+        HashMap<String, Object> salida = partida.aplicaTurno();
 
 //        TODO: Procesar habilidad especial para jugador humano
 //         this.procesarHabilidadEspecial(partida, request, salidaHash);
 
-        // Gestionar fin de partida y turnos
-        this.gestionarEstadoPartida(partida, playerId);
+        gestionarEstadoPartida(partida, playerId);
 
-
-        if (session.getAttributes().get("gameType").equals("pve")) {
-//            this.procesarHabilidadEspecial(partida, request, salidaHash);
-            partida.aplicaTurno();
-            this.gestionarEstadoPartida(partida, playerId);
-            this.enviarVista(partida, Long.valueOf(partida.getTurnoName()), salidaHash);
-        } else if (session.getAttributes().get("gameType").equals("pvp")) {
-            this.enviarVista(partida, playerId, salidaHash);
-        } else {
-            throw new IllegalStateException("Invalid game type");
+        String gameType = String.valueOf(session.getAttributes().get("gameType"));
+        switch (gameType) {
+            case "pve" -> {
+                partida.aplicaTurno();
+                gestionarEstadoPartida(partida, playerId);
+                enviarVista(partida, Long.valueOf(partida.getTurnoName()), salida);
+            }
+            case "pvp" -> enviarVista(partida, playerId, salida);
+            default -> throw new IllegalStateException("Invalid game type");
         }
-
     }
 
-//    private void procesarHabilidadEspecial(Partida partida, MoveRequest request, HashMap<String, Object> salidaHash) {
-//        if (request.isSpecialAbility()) {
-//            Nave ultimaTocada = (Nave) salidaHash.get("Nave");
-//            if (ultimaTocada != null) {
-//                ultimaTocada.accionComplementaria(partida);
-//                salidaHash.put("HabilidadEspecial", true);
-//            }
-//        }
-//    }
+    private Partida getPartidaOrThrow(Long playerId) {
+        return gameCacheService.getPartida(playerId)
+                .orElseThrow(() -> new IllegalStateException("Game not found"));
+    }
 
     private void gestionarEstadoPartida(Partida partida, Long playerId) {
         if (partida.fin()) {
@@ -151,59 +137,60 @@ public class GameWebSocketHandler extends TextWebSocketHandler {
         }
     }
 
-    private void enviarVista(Partida partida, Long lastPlayerId, HashMap<String, Object> salidaHash) {
+    private void enviarVista(Partida partida, Long lastPlayerId, HashMap<String, Object> salida) {
         Long opponentId = Long.valueOf(partida.getTurnoName());
-        assert !opponentId.equals(lastPlayerId);
+        if (opponentId.equals(lastPlayerId)) return;
 
-        Nave ultimaTocada = (Nave) salidaHash.get("Nave");
-        SpecialAbility availableAbility = SpecialAbility.fromShipName(ultimaTocada.getName());
-        char[][] board = partida.getTableros().get(0);
-        char[][] boardMasked = partida.getTableros().get(1);
+        Nave nave = (Nave) salida.get("Nave");
+        GameViewDTO view = GameViewDTO.builder()
+                .availableAbility(SpecialAbility.fromShipName(nave.getName()))
+                .ownBoard(partida.getTableros().get(0))
+                .enemyBoardMasked(partida.getTableros().get(1))
+                .build();
 
-        GameViewDTO opponentView = GameViewDTO.builder()
-                        .availableAbility(availableAbility)
-                        .ownBoard(board)
-                        .enemyBoardMasked(boardMasked)
-                        .build();
-
-        this.sendView(opponentId, opponentView);
+        this.sendView(opponentId, view);
     }
 
-    private void sendView(Long userId, GameViewDTO gameView) {
-        gameCacheService.getPlayerSession(userId).flatMap(this::findSessionById).ifPresent(session -> {
-            try {
-                session.sendMessage(new TextMessage(objectMapper.writeValueAsString(gameView)));
-            } catch (IOException ex) {
-                log.error("Failed to send view to player {}", userId, ex);
-            }
-        });
+    private void sendView(Long userId, GameViewDTO view) {
+        gameCacheService.getPlayerSession(userId)
+                .flatMap(this::findSessionById)
+                .ifPresent(session -> sendMessage(session, view));
+    }
+
+    private void sendMessage(WebSocketSession session, GameViewDTO view) {
+        try {
+            session.sendMessage(new TextMessage(objectMapper.writeValueAsString(view)));
+        } catch (IOException ex) {
+            log.error("Failed to send view to player {}", session.getId(), ex);
+        }
     }
 
     private Optional<WebSocketSession> findSessionById(String sessionId) {
-        return sessions.stream().filter(session -> session.getId().equals(sessionId)).findFirst();
+        return sessions.stream()
+                .filter(s -> s.getId().equals(sessionId))
+                .findFirst();
     }
 
     @Override
     public void afterConnectionClosed(@NonNull WebSocketSession session, @NonNull CloseStatus status) {
         sessions.remove(session);
-        Long playerId = getPlayerId(session.getPrincipal());
+        Long playerId = this.extractPlayerId(session);
         gameCacheService.removePlayerSession(playerId);
         log.info("Disconnected session {} for player {}", session.getId(), playerId);
     }
 
     @Override
     public void handleTransportError(WebSocketSession session, @NonNull Throwable exception) {
-        log.error("Error in the connection {}: {}", session.getId(), exception.getMessage(), exception);
-
-        if (session.isOpen()) {
-            try {
+        log.error("Error in session {}: {}", session.getId(), exception.getMessage(), exception);
+        try {
+            if (session.isOpen()) {
                 session.close(CloseStatus.SERVER_ERROR);
-                sessions.remove(session);
-            } catch (IOException ex) {
-                log.error("Failed to close session {} after transport error: {}", session.getId(), ex.getMessage(), ex);
             }
+        } catch (IOException e) {
+            log.error("Error closing session {}: {}", session.getId(), e.getMessage(), e);
+        } finally {
+            sessions.remove(session);
         }
-
         this.sendErrorMessage(session, exception.getMessage());
     }
 
@@ -212,9 +199,9 @@ public class GameWebSocketHandler extends TextWebSocketHandler {
             if (session.isOpen()) {
                 session.sendMessage(new TextMessage("{\"error\": \"" + errorMessage + "\"}"));
             }
-        } catch (Exception ex) {
-            log.error("Error sending error message: {}", ex.getMessage(), ex);
-            throw new RuntimeException("Error sending error message", ex);
+        } catch (IOException e) {
+            log.error("Error sending error message: {}", e.getMessage(), e);
+            throw new RuntimeException("Error sending error message", e);
         }
     }
 }
