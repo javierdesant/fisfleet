@@ -1,5 +1,6 @@
 package es.upm.etsisi.fis.fisfleet.infrastructure.config.security;
 
+import servidor.Autenticacion;
 import utilidades.Cifrado;
 
 public class LDAPAuthenticator {
@@ -8,8 +9,7 @@ public class LDAPAuthenticator {
         if (email == null) {
             return false;
         }
-        email = email.trim();
-        return email.endsWith("@upm.es") || email.endsWith("@alumnos.upm.es");
+        return Autenticacion.existeCuentaUPMStatic(email);
     }
 
     public static String encryptUsername(String username) {

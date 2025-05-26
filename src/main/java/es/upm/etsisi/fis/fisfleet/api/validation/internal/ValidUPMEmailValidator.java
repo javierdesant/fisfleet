@@ -1,9 +1,9 @@
 package es.upm.etsisi.fis.fisfleet.api.validation.internal;
 
 import es.upm.etsisi.fis.fisfleet.api.validation.ValidUPMEmail;
+import es.upm.etsisi.fis.fisfleet.infrastructure.config.security.LDAPAuthenticator;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
-import servidor.Autenticacion;
 
 public class ValidUPMEmailValidator implements ConstraintValidator<ValidUPMEmail, String> {
 
@@ -13,6 +13,6 @@ public class ValidUPMEmailValidator implements ConstraintValidator<ValidUPMEmail
             return true;    // @NotBlank should handle this
         }
 
-        return Autenticacion.existeCuentaUPMStatic(email);
+        return LDAPAuthenticator.accountBelongsToUPM(email);
     }
 }
