@@ -1,5 +1,6 @@
 package es.upm.etsisi.fis.fisfleet.infrastructure.controllers;
 
+import es.upm.etsisi.fis.fisfleet.infrastructure.exceptions.TurnTimeoutException;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -40,5 +41,10 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(SecurityException.class)
     public ResponseEntity<String> handleSecurityException(SecurityException ex) {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ex.getMessage());
+    }
+
+    @ExceptionHandler(TurnTimeoutException.class)
+    public ResponseEntity<String> handleTurnTimeoutException(TurnTimeoutException ex) {
+        return ResponseEntity.status(HttpStatus.REQUEST_TIMEOUT).body(ex.getMessage());
     }
 }
