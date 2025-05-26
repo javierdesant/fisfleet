@@ -19,7 +19,7 @@ public class WebSocketConfig implements WebSocketConfigurer {
 
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-        registry.addHandler(gameWebSocketHandler, "api/ws/game")
+        registry.addHandler(gameWebSocketHandler, "api/ws/pve/{gameId}", "api/ws/pvp/{gameId}")
                 .addInterceptors(jwtInterceptor)
                 .setHandshakeHandler(jwtHandshakeHandler)
                 .setAllowedOrigins("*");
