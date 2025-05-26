@@ -59,7 +59,10 @@ public class GameServiceImpl implements GameService {
     @Override
     public void sendPartidaView(Partida partida, Long lastPlayerId, HashMap<String, Object> result, Set<WebSocketSession> sessions) {
         Long opponentId = Long.valueOf(partida.getTurnoName());
-        if (opponentId.equals(lastPlayerId)) return;
+        if (opponentId.equals(lastPlayerId)) {
+            log.debug("Not sending view to opponent {} as they are the last player {}", opponentId, lastPlayerId);
+            return;
+        }
 
         Nave nave = (Nave) result.get("Nave");
         GameViewDTO view = GameViewDTO.builder()
@@ -68,18 +71,21 @@ public class GameServiceImpl implements GameService {
                 .enemyBoardMasked(partida.getTableros().get(1))
                 .build();
 
-        sendViewToPlayer(opponentId, view, sessions);
+        this.sendViewToPlayer(opponentId, view, sessions);
     }
 
     private void sendViewToPlayer(Long playerId, GameViewDTO view, Set<WebSocketSession> sessions) {
         Optional<String> sessionIdOpt = gameCacheService.getPlayerSession(playerId);
-        if (sessionIdOpt.isEmpty()) return;
+        if (sessionIdOpt.isEmpty()) {
+            log.warn("No session found for player ID {}", playerId);
+            return;
+        }
 
         String sessionId = sessionIdOpt.get();
         sessions.stream()
                 .filter(s -> s.getId().equals(sessionId))
                 .findFirst()
-                .ifPresent(session -> sendMessage(session, view));
+                .ifPresent(session -> this.sendMessage(session, view));
     }
 
     private void sendMessage(WebSocketSession session, GameViewDTO view) {
