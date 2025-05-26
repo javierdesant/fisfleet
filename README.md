@@ -59,21 +59,25 @@ fisfleet/
 ├── docs/                        # Documentación del proyecto (UML, requisitos, etc.)
 │   └── uml/
 ├── frontend/                    # Código fuente del frontend (React)
+│   ├── design/                  # Recursos de diseño (colores, estilos, etc.)
 │   ├── app/
 │   │   ├── assets/images/       # Imágenes usadas en la UI
-│   │   └── routes/              # Rutas de React Router
-│   │       ├── _landing/       # Página principal
-│   │       ├── _landing._index/
-│   │       ├── _auth.login/
-│   │       │   └── icons/
-│   │       ├── _auth.register/
-│   │       ├── _auth.profile/
-│   │       ├── admin/
-│   │       ├── match_.$id/
-│   │       └── match_.$id._index/
-│   │           └── icons/
-│   ├── design/                 # Recursos de diseño (colores, estilos, etc.)
-│   └── public/                 # Archivos estáticos (favicon, imágenes públicas)
+│   │   ├── routes/              # Rutas de React Router
+│   │   ├── _landing/            # Página principal
+│   │   ├── _landing._index/
+│   │   ├── _auth.login/
+│   │   │   └── icons/
+│   │   ├── _auth.register/
+│   │   ├── _auth.profile/
+│   │   ├── admin/
+│   │   ├── match_.$id/
+│   │   └── match_.$id._index/
+│   │       └── icons/
+│   ├── public/                 # Archivos estáticos (favicon, imágenes públicas)
+│   ├── package.json            # Dependencias del frontend
+│   ├── package-lock.json       # Lockfile de npm
+│   ├── tsconfig.json           # Configuración TypeScript
+│   └── vite.config.ts          # Configuración Vite
 ├── libs/                       # Librerías externas en formato JAR
 │   └── etsisi/
 │       ├── Battleship/1.11/
@@ -89,16 +93,12 @@ fisfleet/
 │   └── test/                   # Tests automatizados del backend
 ├── target/                     # Directorio de build de Maven (ignorado en git)
 ├── TODO/                       # Gestión de tareas y notas internas
-├── .env                        # Variables de entorno
+├── .env.example                # Ejemplo de variables de entorno
 ├── .gitignore                  # Exclusiones de archivos en Git
 ├── Dockerfile                  # Imagen Docker del proyecto
 ├── docker-compose.yml          # Orquestación de servicios
 ├── mvnw, mvnw.cmd              # Wrappers de Maven
 ├── pom.xml                     # Configuración Maven del backend
-├── package.json                # Dependencias del frontend
-├── package-lock.json           # Lockfile de npm
-├── tsconfig.json               # Configuración TypeScript
-├── vite.config.ts              # Configuración Vite
 ├── LICENSE                     # Licencia del proyecto
 └── README.md                   # Este archivo
 ```
@@ -136,15 +136,15 @@ cp .env.example .env
 #### Backend (Java/Spring)
 
 ```bash
-cd backend
 mvn clean install
 ```
 
 #### Frontend (React)
 
 ```bash
-cd ../frontend
+cd frontend
 npm install
+cd ..
 ```
 
 ---
@@ -154,15 +154,15 @@ npm install
 #### Backend
 
 ```bash
-cd backend
 mvn spring-boot:run
 ```
 
 #### Frontend
 
 ```bash
-cd ../frontend
+cd frontend
 npm run dev
+cd ..
 ```
 
 Esto arrancará el servidor de desarrollo de React Router con recarga en caliente y generación de tipos para rutas.
@@ -174,14 +174,13 @@ Esto arrancará el servidor de desarrollo de React Router con recarga en calient
 #### Backend
 
 ```bash
-cd backend
 mvn test
 ```
 
 #### Frontend
 
 ```bash
-cd ../frontend
+cd frontend
 npm run typecheck
 ```
 
@@ -189,13 +188,12 @@ npm run typecheck
 
 ### 6️⃣ Ejecución con Docker Compose
 
-Desde la raíz del proyecto:
+La aplicación levantará un contenedor automáticamente al iniciarse.
+En caso de error en la base de datos recuerda que siempre puedes hacer:
 
 ```bash
-docker-compose up --build
+docker-compose down -v
 ```
-
-Esto levantará todos los servicios necesarios (backend, frontend, base de datos, etc.).
 
 ---
 
@@ -209,9 +207,8 @@ Esto levantará todos los servicios necesarios (backend, frontend, base de datos
 
 ## 🕹️ Cómo Jugar
 
-1. Accede a la aplicación en [http://localhost:8080](http://localhost:8080)
-   o [http://localhost:5173](http://localhost:5173) según el entorno.
-2. **Regístrate** con un correo válido de la **UPM** utilizando las credenciales LDAP.
+1. Accede a la aplicación en [http://localhost:5173](http://localhost:5173).
+2. **Regístrate** con un correo válido de la **UPM** (alumnos) utilizando las credenciales LDAP.
 3. Configura tu partida:
     - Juega contra una **máquina** con diferentes niveles de dificultad.
     - Guarda las estadísticas de cada partida, consulta el ranking y mejora tu habilidad.
@@ -227,6 +224,7 @@ Esto levantará todos los servicios necesarios (backend, frontend, base de datos
 - **Infraestructura**:
   - Contenerización con Docker y orquestación con Docker Compose.
   - Integración con bases de datos relacionales como PostgreSQL/MySQL.
+  - Uso de Caffeine con cachés de alto rendimiento y baja latencia.
 - **Frontend**:
     - React, React Router, TailwindCSS, HTML5, CSS3 y diseño responsivo compatible con dispositivos modernos.
 - **Testeo y Validación**:
@@ -241,6 +239,13 @@ El mantenimiento y la evolución del juego están previstos durante los **próxi
 - Mejorar los algoritmos de la máquina.
 - Implementar nuevas mecánicas y modos de juego.
 - Aumentar las opciones de accesibilidad.
+
+---
+
+## 👨‍🏫 Profesores
+
+- Andrea Cimmino
+- Carlos Badenes
 
 ---
 
@@ -261,13 +266,6 @@ Proyecto realizado por el equipo de la **Universidad Politécnica de Madrid**:
 
 ---
 
-## 👨‍🏫 Profesores
-
-- Andrea Cimmino
-- Carlos Badenes
-
----
-
 ## 🌟 Licencia
 
 Este proyecto cumple con la **LOPD-GDD** y se rige bajo la [Licencia MIT](LICENSE). Los datos de los jugadores serán
@@ -278,7 +276,7 @@ usados exclusivamente con fines relacionados con el juego.
 ## 📅 Fechas Clave
 
 - **Entrega 1** (Requisitos y Análisis): 16 de marzo de 2024.
-- **Entrega 2** (Diseño, Implementación y Pruebas): 25 de mayo de 2024.
+- **Entrega 2** (Diseño, Implementación y Pruebas): 25 de mayo de 2024. (26 por méritos)
 
 El proyecto se gestionará y entregará a través de **Redmine**, **Gitlab**, y el ecosistema de **Moodle** de la asignatura.
 
