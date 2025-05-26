@@ -1,7 +1,6 @@
 package es.upm.etsisi.fis.fisfleet;
 
 import es.upm.etsisi.fis.fisfleet.api.dto.requests.UserRequest;
-import es.upm.etsisi.fis.fisfleet.api.dto.responses.UserResponse;
 import es.upm.etsisi.fis.fisfleet.domain.entities.UserEntity;
 import lombok.experimental.UtilityClass;
 import servidor.UPMUsers;
@@ -12,7 +11,7 @@ import java.util.List;
 @UtilityClass
 public class DataProvider {
 
-    public static List<UserRequest> userRequestListMock() {
+    public static List<UserRequest> userRequestValidListMock() {
         return List.of(
                 UserRequest.builder()
                         .username("test1.user@alumnos.upm.es")
@@ -37,42 +36,35 @@ public class DataProvider {
         );
     }
 
-    public static List<UserResponse> userResponseListMock() {
+    public static List<UserRequest> userRequestNotValidListMock() {
         return List.of(
-                UserResponse.builder()
-                        .id(1L)
-                        .usernameHash("hash1XYZ")
-                        .alias("TestUser1")
-                        .registrationDate(Instant.now())
+                UserRequest.builder()
+                        .username("invalid@urss.es")
+                        .alias("ValidAlias")
+                        .password("password123")
                         .build(),
-                UserResponse.builder()
-                        .id(2L)
-                        .usernameHash("hash2ABC")
-                        .alias("TestUser2")
-                        .registrationDate(Instant.now().minusSeconds(3600))
+
+
+                UserRequest.builder()
+                        .username("valid@upm.es")
+                        .alias("inv@lid")
+                        .password("password123")
                         .build(),
-                UserResponse.builder()
-                        .id(3L)
-                        .usernameHash("hash3DEF")
-                        .alias("TestUser3")
-                        .registrationDate(Instant.parse("2025-05-21T00:00:01Z"))
+
+
+                UserRequest.builder()
+                        .username("valid@upm.es")
+                        .alias("AliasTooLong123")
+                        .password("password123")
+                        .build(),
+
+
+                UserRequest.builder()
+                        .username("valid@upm.es")
+                        .alias("admin")
+                        .password("password123")
                         .build()
         );
-    }
-
-    public static List<UserEntity> userEntityListMock() {
-        UserEntity user1 = new UserEntity("hash1XYZ", "TestUser1");
-        user1.setRegistrationDate(Instant.now());
-        user1.setUPMUserType(UPMUsers.PAS);
-
-        UserEntity user2 = new UserEntity("hash2ABC", "TestUser2");
-        user2.setRegistrationDate(Instant.now().minusSeconds(3600));
-
-        UserEntity user3 = new UserEntity("hash3DEF", "TestUser3");
-        user3.setRegistrationDate(Instant.parse("2025-05-21T03:00:00Z"));
-        user3.setUPMUserType(UPMUsers.PDI);
-
-        return List.of(user1, user2, user3);
     }
 
     public static UserEntity userEntityMock() {

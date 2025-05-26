@@ -27,8 +27,8 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class UserServiceImplTest {
 
-    private final UserRequest alumnoRequest = DataProvider.userRequestListMock().get(0);
-    private final UserRequest pasRequest = DataProvider.userRequestListMock().get(1);
+    private final UserRequest alumnoRequest = DataProvider.userRequestValidListMock().get(0);
+    private final UserRequest pasRequest = DataProvider.userRequestValidListMock().get(1);
     private final UserEntity mockUser = DataProvider.userEntityMock();
     @Mock
     private UserRepository userRepository;
