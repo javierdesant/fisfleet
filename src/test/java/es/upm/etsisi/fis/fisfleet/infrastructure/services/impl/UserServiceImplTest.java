@@ -121,6 +121,15 @@ class UserServiceImplTest {
             );
         }
     }
+    @Test
+    void update_shouldThrowExceptionWhenUserNotFound() {
+        final Long userId = 999L;
+        final UserRequest request = DataProvider.userRequestListMock().get(0);
+
+        when(userRepository.findById(userId)).thenReturn(Optional.empty());
+
+        assertThrows(EntityNotFoundException.class, () -> this.userService.update(request, userId));
+    }
 
     // DELETE
 
