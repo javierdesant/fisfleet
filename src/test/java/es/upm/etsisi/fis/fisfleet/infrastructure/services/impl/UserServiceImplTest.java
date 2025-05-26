@@ -4,6 +4,7 @@ import es.upm.etsisi.fis.fisfleet.DataProvider;
 import es.upm.etsisi.fis.fisfleet.api.dto.requests.UserRequest;
 import es.upm.etsisi.fis.fisfleet.domain.entities.UserEntity;
 import es.upm.etsisi.fis.fisfleet.domain.repositories.UserRepository;
+import es.upm.etsisi.fis.fisfleet.infrastructure.exceptions.RegistrationException;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -63,8 +64,8 @@ class UserServiceImplTest {
             roleMock.when(() -> ObtencionDeRol.get_UPM_AccountRol(request.getUsername()))
                     .thenReturn(UPMUsers.PAS);
 
-            final IllegalArgumentException ex = assertThrows(
-                    IllegalArgumentException.class,
+            final RegistrationException ex = assertThrows(
+                    RegistrationException.class,
                     () -> userService.create(request)
             );
 
