@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import es.upm.etsisi.fis.fisfleet.api.dto.GameViewDTO;
 import es.upm.etsisi.fis.fisfleet.api.dto.SpecialAbility;
 import es.upm.etsisi.fis.fisfleet.infrastructure.cache.GameCacheService;
+import es.upm.etsisi.fis.fisfleet.infrastructure.exceptions.GameNotFoundException;
 import es.upm.etsisi.fis.fisfleet.infrastructure.services.GameService;
 import es.upm.etsisi.fis.model.Nave;
 import es.upm.etsisi.fis.model.Partida;
@@ -31,7 +32,7 @@ public class GameServiceImpl implements GameService {
     @Override
     public Partida getPartidaOrThrow(UUID gameId) {
         return gameCacheService.getPartida(gameId)
-                .orElseThrow(() -> new IllegalStateException("Partida not found"));
+                .orElseThrow(() -> new GameNotFoundException(gameId));
     }
 
     @Override
