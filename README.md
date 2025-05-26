@@ -108,6 +108,8 @@ fisfleet/
 
 ---
 ## Diagramas de diseño del sistema
+### 😎Diagrama de diseño:
+
 ### 😎Diagrama de componentes:
 Generado utilizando los componentes arquitectónicos y sus relaciones a través de las interfaces.
 
