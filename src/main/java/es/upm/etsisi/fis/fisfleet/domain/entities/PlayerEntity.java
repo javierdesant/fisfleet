@@ -7,7 +7,6 @@ import es.upm.etsisi.fis.model.TBarcoAccionComplementaria;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
@@ -51,7 +50,7 @@ public abstract class PlayerEntity implements Serializable, IJugador {
     private IJugador player;
 
     protected PlayerEntity() {
-        this.initPlayer();
+        this.init();
     }
 
     @Builder.Default
@@ -59,14 +58,14 @@ public abstract class PlayerEntity implements Serializable, IJugador {
     private final boolean __init = initialize();
 
     private boolean initialize() {
-        this.initPlayer();
+        this.init();
         return true;
     }
 
     @PostLoad
     @PostPersist
     @PostUpdate
-    protected abstract void initPlayer();
+    protected abstract void init();
 
     @Override
     public boolean aceptarAccionComplementaria(TBarcoAccionComplementaria tBarcoAccionComplementaria, int cantidadDisponible) {

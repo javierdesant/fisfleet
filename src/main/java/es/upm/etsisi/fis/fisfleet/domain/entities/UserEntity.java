@@ -78,7 +78,7 @@ public class UserEntity extends PlayerEntity implements UserDetails {
     }
 
     @Override
-    protected void initPlayer() {
+    protected void init() {
         this.setPlayer(new HumanPlayer(this.getId()));
     }
 }
