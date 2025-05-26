@@ -25,9 +25,7 @@ public class MatchmakingServiceImpl implements MatchmakingService {
     public String createPveMatch(Long playerId, TDificultad difficulty) {
         IJugador player1 = authenticationService.findLoggedInUser();
         assert player1.getNombre().equals(playerId.toString());
-        IJugador ai = MachineEntity.builder()
-                .difficulty(difficulty)
-                .build();
+        IJugador ai = new MachineEntity();
         IMovimiento movimientoIn = new MoveEntity();
 
         Partida partida = new Partida(player1, ai, movimientoIn);

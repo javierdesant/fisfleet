@@ -6,9 +6,7 @@ import es.upm.etsisi.fis.model.IPuntuacion;
 import es.upm.etsisi.fis.model.TBarcoAccionComplementaria;
 import jakarta.annotation.PostConstruct;
 import jakarta.persistence.*;
-import lombok.Builder;
 import lombok.Data;
-import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -17,7 +15,6 @@ import java.util.List;
 import java.util.Set;
 
 @Data
-@SuperBuilder
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "jugador")
@@ -27,52 +24,41 @@ public abstract class PlayerEntity implements Serializable, IJugador {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @Builder.Default
     @OneToMany(mappedBy = "player")
-    private Set<MoveEntity> moves = new LinkedHashSet<>();
+    private Set<MoveEntity> moves;
 
-    @Builder.Default
     @OneToMany(mappedBy = "player1")
-    private Set<GameResultEntity> gamesAsPlayer1 = new LinkedHashSet<>();
+    private Set<GameResultEntity> gamesAsPlayer1;
 
-    @Builder.Default
     @OneToMany(mappedBy = "player2")
-    private Set<GameResultEntity> gamesAsPlayer2 = new LinkedHashSet<>();
+    private Set<GameResultEntity> gamesAsPlayer2;
 
-    @Builder.Default
     @OneToMany(mappedBy = "winner")
-    private Set<GameResultEntity> gamesWon = new LinkedHashSet<>();
+    private Set<GameResultEntity> gamesWon;
 
-    @Builder.Default
     @OneToMany(mappedBy = "player")
-    private Set<ScoreEntity> scores = new LinkedHashSet<>();
+    private Set<ScoreEntity> scores;
 
     @Transient
     private IJugador player;
 
-    protected PlayerEntity() {
-        this.init();
+    public PlayerEntity() {
+        this.moves = new LinkedHashSet<>();
+        this.gamesAsPlayer1 = new LinkedHashSet<>();
+        this.gamesAsPlayer2 = new LinkedHashSet<>();
+        this.gamesWon = new LinkedHashSet<>();
+        this.scores = new LinkedHashSet<>();
+        this.moveIndex = 0;
     }
 
-    @Builder.Default
-    @Transient
-    private boolean __init = false;
-
-    @PostConstruct
-    private void postConstructInit() {
-        this.__init = initialize();
-    }
-
-
-    private boolean initialize() {
-        this.init();
-        return true;
+    protected void setPlayer(IJugador player) {
+        this.player = player;
     }
 
     @PostLoad
     @PostPersist
     @PostUpdate
-    protected abstract void init();
+    protected abstract void initPlayer();
 
     @Override
     public boolean aceptarAccionComplementaria(TBarcoAccionComplementaria tBarcoAccionComplementaria, int cantidadDisponible) {
@@ -84,9 +70,8 @@ public abstract class PlayerEntity implements Serializable, IJugador {
         return player.realizaTurno(chars);
     }
 
-    @Builder.Default
     @Transient
-    private int moveIndex = 0;
+    private int moveIndex;
 
     @Override
     public void addMovimiento(IMovimiento movIn) {

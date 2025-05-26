@@ -38,12 +38,7 @@ public class UserServiceImpl implements UserService {
 
         String usernameHash = LDAPAuthenticator.authenticate(username);
 
-        UserEntity newUser = UserEntity.builder()
-                .usernameHash(usernameHash)
-                .alias(request.getAlias())
-                .registrationDate(Instant.now())
-                .UPMUserType(UPMUsers.ALUMNO)
-                .build();
+        UserEntity newUser = new UserEntity(usernameHash, request.getAlias());
 
         assert newUser.getAuthorities().contains(new SimpleGrantedAuthority(RolePermission.REGISTER.name()));
 

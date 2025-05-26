@@ -9,6 +9,7 @@ import jakarta.validation.constraints.Size;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.DynamicInsert;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -20,10 +21,8 @@ import java.util.List;
 import java.util.stream.Stream;
 
 @NoArgsConstructor
-@AllArgsConstructor
 @Data
 @EqualsAndHashCode(callSuper = true)
-@SuperBuilder
 @Entity
 @Table(name = "usuarios")
 public class UserEntity extends PlayerEntity implements UserDetails {
@@ -42,6 +41,14 @@ public class UserEntity extends PlayerEntity implements UserDetails {
     @Column(name = "fecha_registro", nullable = false)
     @ColumnDefault("CURRENT_TIMESTAMP")
     private Instant registrationDate;
+
+    public UserEntity(String usernameHash, String alias) {
+        super();
+        this.usernameHash = usernameHash;
+        this.UPMUserType = UPMUsers.ALUMNO;
+        this.alias = alias;
+        this.initPlayer();
+    }
 
     @NotNull
     @Enumerated(EnumType.STRING)
@@ -78,7 +85,7 @@ public class UserEntity extends PlayerEntity implements UserDetails {
     }
 
     @Override
-    protected void init() {
+    protected void initPlayer() {
         this.setPlayer(new HumanPlayer(this.getId()));
     }
 }

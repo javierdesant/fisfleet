@@ -3,7 +3,10 @@ package es.upm.etsisi.fis.fisfleet.infrastructure.controllers;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import es.upm.etsisi.fis.fisfleet.api.dto.requests.UserRequest;
 import es.upm.etsisi.fis.fisfleet.domain.entities.UserEntity;
+import es.upm.etsisi.fis.fisfleet.domain.repositories.UserRepository;
+import es.upm.etsisi.fis.fisfleet.infrastructure.services.TokenService;
 import es.upm.etsisi.fis.fisfleet.infrastructure.services.UserService;
+import es.upm.etsisi.fis.fisfleet.infrastructure.services.impl.JwtService;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,13 +42,10 @@ class UserControllerTest {
                 .password("securePass123")
                 .build();
 
-        UserEntity createdUser = UserEntity.builder()
-                .id(1L)
-                .usernameHash("hashed")
-                .alias("TestUser")
-                .registrationDate(Instant.now())
-                .UPMUserType(servidor.UPMUsers.ALUMNO)
-                .build();
+        UserEntity createdUser = new UserEntity("hashed", "TestUser");
+        createdUser.setId(1L);
+        createdUser.setRegistrationDate(Instant.now());
+        createdUser.setUPMUserType(servidor.UPMUsers.ALUMNO);
 
         Mockito.when(userService.create(any(UserRequest.class))).thenReturn(createdUser);
 
@@ -60,13 +60,10 @@ class UserControllerTest {
     void testGetUserById() throws Exception {
         Long userId = 1L;
 
-        UserEntity user = UserEntity.builder()
-                .id(userId)
-                .usernameHash("hash123")
-                .alias("User1")
-                .registrationDate(Instant.now())
-                .UPMUserType(servidor.UPMUsers.ALUMNO)
-                .build();
+        UserEntity user = new UserEntity("hash123", "User1");
+        user.setId(userId);
+        user.setRegistrationDate(Instant.now());
+        user.setUPMUserType(servidor.UPMUsers.ALUMNO);
 
         Mockito.when(userService.read(userId)).thenReturn(user);
 
@@ -85,13 +82,10 @@ class UserControllerTest {
                 .password("newPass")
                 .build();
 
-        UserEntity updated = UserEntity.builder()
-                .id(userId)
-                .usernameHash("hashUpdated")
-                .alias("UpdatedAlias")
-                .registrationDate(Instant.now())
-                .UPMUserType(servidor.UPMUsers.ALUMNO)
-                .build();
+        UserEntity updated = new UserEntity("hashUpdated", "UpdatedAlias");
+        updated.setId(userId);
+        updated.setRegistrationDate(Instant.now());
+        updated.setUPMUserType(servidor.UPMUsers.ALUMNO);
 
         Mockito.when(userService.update(eq(request), eq(userId))).thenReturn(updated);
 

@@ -8,15 +8,29 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @NoArgsConstructor
-@AllArgsConstructor
 @Data
 @EqualsAndHashCode(callSuper = true)
-@SuperBuilder
 @Entity
 @Table(name = "maquina")
 public class MachineEntity extends PlayerEntity {
+
+    public MachineEntity(TDificultad difficulty) {
+        super();
+        this.difficulty = difficulty;
+        this.algorithm = switch (difficulty) {  // refactor me
+            case FACIL:
+                yield "BASIC";
+            case NORMAL:
+                yield "NORMAL";
+            case DIFICIL:
+                yield "EXPERT";
+        };
+        this.initPlayer();
+        this.generatedName = this.getPlayer().getNombre();
+    }
 
     @Size(max = 50)
     @NotNull
@@ -34,9 +48,8 @@ public class MachineEntity extends PlayerEntity {
     private TDificultad difficulty;
 
     @Override
-    protected void init() {
+    protected void initPlayer() {
         Maquina ai = FactoriaMaquina.creaMaquina(difficulty.toString());
         this.setPlayer(ai);
-        this.setGeneratedName(ai.getNombre());
     }
 }

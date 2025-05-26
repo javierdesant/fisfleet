@@ -61,34 +61,25 @@ public class DataProvider {
     }
 
     public static List<UserEntity> userEntityListMock() {
-        return List.of(
-                UserEntity.builder()
-                        .usernameHash("hash1XYZ")
-                        .alias("TestUser1")
-                        .registrationDate(Instant.now())
-                        .UPMUserType(UPMUsers.PAS)
-                        .build(),
-                UserEntity.builder()
-                        .usernameHash("hash2ABC")
-                        .alias("TestUser2")
-                        .registrationDate(Instant.now().minusSeconds(3600))
-                        .UPMUserType(UPMUsers.ALUMNO)
-                        .build(),
-                UserEntity.builder()
-                        .usernameHash("hash3DEF")
-                        .alias("TestUser3")
-                        .registrationDate(Instant.parse("2025-05-21T03:00:00Z"))
-                        .UPMUserType(UPMUsers.PDI)
-                        .build()
-        );
+        UserEntity user1 = new UserEntity("hash1XYZ", "TestUser1");
+        user1.setRegistrationDate(Instant.now());
+        user1.setUPMUserType(UPMUsers.PAS);
+
+        UserEntity user2 = new UserEntity("hash2ABC", "TestUser2");
+        user2.setRegistrationDate(Instant.now().minusSeconds(3600));
+
+        UserEntity user3 = new UserEntity("hash3DEF", "TestUser3");
+        user3.setRegistrationDate(Instant.parse("2025-05-21T03:00:00Z"));
+        user3.setUPMUserType(UPMUsers.PDI);
+
+        return List.of(user1, user2, user3);
     }
 
     public static UserEntity userEntityMock() {
-        return UserEntity.builder()
-                .usernameHash("hash2ABC")
-                .alias("TestUser2")
-                .registrationDate(Instant.now().minusSeconds(3600))
-                .UPMUserType(UPMUsers.ALUMNO)
-                .build();
+        UserEntity user = new UserEntity("hash2ABC", "TestUser2");
+        user.setRegistrationDate(Instant.now().minusSeconds(3600));
+        user.setUPMUserType(UPMUsers.ALUMNO);
+        return user;
     }
+
 }
