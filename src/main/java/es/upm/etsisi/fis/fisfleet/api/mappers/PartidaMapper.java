@@ -18,7 +18,7 @@ public interface PartidaMapper {
     @Mapping(target = "player2", source = "partida", qualifiedByName = "player2FromPartida")
     @Mapping(target = "winner", source = "partida", qualifiedByName = "winnerFromPartida")
     @Mapping(target = "startDate", source = "inicio", qualifiedByName = "longToInstant")
-    @Mapping(target = "endDate", ignore = true) // Debes calcularlo según tu lógica
+    @Mapping(target = "endDate", ignore = true)
     @Mapping(target = "moves", ignore = true)
     @Mapping(target = "id", ignore = true)
     GameResultEntity partidaToGameResultEntity(Partida partida);

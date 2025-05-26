@@ -24,9 +24,6 @@ public abstract class PlayerEntity implements Serializable, IJugador {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @OneToMany(mappedBy = "player")
-    private Set<MoveEntity> moves;
-
     @OneToMany(mappedBy = "player1")
     private Set<GameResultEntity> gamesAsPlayer1;
 
@@ -36,7 +33,10 @@ public abstract class PlayerEntity implements Serializable, IJugador {
     @OneToMany(mappedBy = "winner")
     private Set<GameResultEntity> gamesWon;
 
-    @OneToMany(mappedBy = "player")
+    @OneToMany(mappedBy = "player", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<MoveEntity> moves;
+
+    @OneToMany(mappedBy = "player", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<ScoreEntity> scores;
 
     @Transient
@@ -48,7 +48,6 @@ public abstract class PlayerEntity implements Serializable, IJugador {
         this.gamesAsPlayer2 = new LinkedHashSet<>();
         this.gamesWon = new LinkedHashSet<>();
         this.scores = new LinkedHashSet<>();
-        this.moveIndex = 0;
     }
 
     protected void setPlayer(IJugador player) {
@@ -70,20 +69,19 @@ public abstract class PlayerEntity implements Serializable, IJugador {
         return player.realizaTurno(chars);
     }
 
-    @Transient
-    private int moveIndex;
-
     @Override
     public void addMovimiento(IMovimiento movIn) {
-        if (movIn instanceof MoveEntity) {
-            moves.add((MoveEntity) movIn);
+        if (movIn instanceof MoveEntity move) {
+            move.setPlayer(this);
+            moves.add(move);
         }
     }
 
     @Override
-    public void addPuntuacion(IPuntuacion puntos) {
-        if (puntos instanceof ScoreEntity) {
-            scores.add((ScoreEntity) puntos);
+    public void addPuntuacion(IPuntuacion puntIn) {
+        if (puntIn instanceof ScoreEntity score) {
+            score.setPlayer(this); // <- Esto es CLAVE
+            scores.add(score);
         }
     }
 
