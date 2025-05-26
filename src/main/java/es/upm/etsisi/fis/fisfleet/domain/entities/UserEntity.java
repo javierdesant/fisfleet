@@ -1,14 +1,12 @@
 package es.upm.etsisi.fis.fisfleet.domain.entities;
 
+import es.upm.etsisi.fis.fisfleet.infrastructure.core.HumanPlayer;
 import es.upm.etsisi.fis.fisfleet.utils.Role;
 import es.upm.etsisi.fis.fisfleet.utils.RoleMapper;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.ColumnDefault;
 import org.springframework.security.core.GrantedAuthority;
@@ -16,7 +14,6 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import servidor.UPMUsers;
 
-import java.io.Serializable;
 import java.time.Instant;
 import java.util.Collection;
 import java.util.List;
@@ -29,7 +26,7 @@ import java.util.stream.Stream;
 @SuperBuilder
 @Entity
 @Table(name = "usuarios")
-public class UserEntity extends PlayerEntity implements UserDetails, Serializable {
+public class UserEntity extends PlayerEntity implements UserDetails {
 
     @Size(max = 64)
     @NotNull
@@ -81,7 +78,7 @@ public class UserEntity extends PlayerEntity implements UserDetails, Serializabl
     }
 
     @Override
-    public String getNombre() {
-        return this.getAlias();
+    protected void init() {
+        this.setPlayer(new HumanPlayer(this.getId()));
     }
 }

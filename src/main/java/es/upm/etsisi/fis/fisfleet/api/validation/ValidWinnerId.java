@@ -1,5 +1,6 @@
 package es.upm.etsisi.fis.fisfleet.api.validation;
 
+import es.upm.etsisi.fis.fisfleet.api.validation.internal.WinnerIdValidator;
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 

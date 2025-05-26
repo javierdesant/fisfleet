@@ -1,5 +1,6 @@
-package es.upm.etsisi.fis.fisfleet.api.validation;
+package es.upm.etsisi.fis.fisfleet.api.validation.internal;
 
+import es.upm.etsisi.fis.fisfleet.api.validation.ValidUPMEmail;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import servidor.Autenticacion;

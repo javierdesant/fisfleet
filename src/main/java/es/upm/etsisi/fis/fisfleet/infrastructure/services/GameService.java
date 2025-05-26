@@ -1,36 +1,27 @@
 package es.upm.etsisi.fis.fisfleet.infrastructure.services;
 
-import es.upm.etsisi.fis.fisfleet.api.dto.GameStateDTO;
-import es.upm.etsisi.fis.fisfleet.api.dto.GameViewDTO;
-import es.upm.etsisi.fis.fisfleet.api.dto.requests.MoveRequest;
-import es.upm.etsisi.fis.model.TDificultad;
+import es.upm.etsisi.fis.model.Partida;
+import org.springframework.web.socket.WebSocketSession;
 
-public interface GameService {  // TODO: fix GameViewDTO vs GameStateDTO
+import java.util.HashMap;
+import java.util.Set;
+import java.util.UUID;
 
-    GameViewDTO createPvEMatch(TDificultad difficulty);
+public interface GameService {
 
-    GameStateDTO getGameById(Long gameId);
+    Partida getPartidaOrThrow(UUID gameId);
 
-    GameViewDTO getGameViewForPlayer(Long gameId, Long playerId);
+    boolean isPlayerTurn(Partida partida, Long playerId);
 
-    GameStateDTO performAttack(MoveRequest request);
+    HashMap<String, Object> applyTurn(Partida partida);
 
-    GameStateDTO performCounterAttack(MoveRequest request);
+    void handlePartidaState(Partida partida, UUID gameId);
 
-    GameStateDTO launchArtilleryAttack(MoveRequest request);
-
-
-    // TODO: turnOfPlayer vs playerId?
-    GameStateDTO repairSubmarine(Long gameId, Long playerId);
-
-    GameStateDTO revealRow(Long gameId, Long playerId, int y);
-
-    boolean canPlayerPerformAction(Long gameId, Long playerId);
-
-    boolean isGameOver(Long gameId);
-
-    boolean validateMove(MoveRequest request);
+    /**
+     * TODO: Process special abilities for human player
+     * FIXME: Integrate with HumanPlayer and MoveRequestWaiter classes
+     */
+    void sendPartidaView(Partida partida, Long lastPlayerId, HashMap<String, Object> result, Set<WebSocketSession> sessions);
 }
 
-//    GameStateDTO createPvPMatch();
-//    GameStateDTO getGameById(Long gameId);
+//    should I add GameStateDTO createPvPMatch(); ?

@@ -1,16 +1,13 @@
 package es.upm.etsisi.fis.fisfleet.domain.entities;
 
+import es.upm.etsisi.fis.model.FactoriaMaquina;
+import es.upm.etsisi.fis.model.Maquina;
 import es.upm.etsisi.fis.model.TDificultad;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
-import java.util.ArrayList;
-import java.util.HashMap;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -37,7 +34,9 @@ public class MachineEntity extends PlayerEntity {
     private TDificultad difficulty;
 
     @Override
-    public String getNombre() {
-        return this.getGeneratedName();
+    protected void init() {
+        Maquina ai = FactoriaMaquina.creaMaquina(difficulty.toString());
+        this.setPlayer(ai);
+        this.setGeneratedName(ai.getNombre());
     }
 }
