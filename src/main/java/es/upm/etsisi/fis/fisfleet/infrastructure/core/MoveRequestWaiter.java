@@ -12,12 +12,12 @@ public class MoveRequestWaiter {
     private static final Map<Long, CompletableFuture<MoveRequest>> pendingMoves = new ConcurrentHashMap<>();
 
     public static CompletableFuture<MoveRequest> waitForMove(Long userId) {
+        cancelMove(userId);
         CompletableFuture<MoveRequest> future = new CompletableFuture<>();
         pendingMoves.put(userId, future);
         return future;
     }
 
-    // TODO: Implement methods
     public static void submitMove(Long userId, MoveRequest move) {
         CompletableFuture<MoveRequest> future = pendingMoves.remove(userId);
         if (future != null) {

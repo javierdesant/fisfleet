@@ -14,7 +14,6 @@ import java.util.concurrent.TimeoutException;
 
 public class HumanPlayer implements IJugador {
     private final Long userId;
-//    private volatile boolean isMyTurn = true;  // TODO
 
     public HumanPlayer(Long userId) {
         this.userId = userId;
@@ -30,32 +29,25 @@ public class HumanPlayer implements IJugador {
 
     @Override
     public boolean aceptarAccionComplementaria(TBarcoAccionComplementaria tBarcoAccionComplementaria, int i) {
-        if (i < 1) {
-            return false;
-        }
-
-        return true; // TODO
+        // Aquí puedes controlar si el jugador puede usar la habilidad especial según el tipo de barco y usos restantes
+        return i > 0;
     }
 
     @Override
     public int[] realizaTurno(char[][] chars) {
-//        if (!isMyTurn) {
-//            throw new IllegalStateException("It's not your turn.");
-//        }
-
         try {
             MoveRequest move = MoveRequestWaiter.waitForMove(userId).get(30, TimeUnit.SECONDS);
-            return new int[]{move.getCoordinateX(), move.getCoordinateY()};
+            // El tercer valor indica si el usuario quiere usar la habilidad especial
+            return new int[]{
+                    move.getCoordinateX(),
+                    move.getCoordinateY(),
+                    move.isSpecialAbility() ? 1 : 0
+            };
         } catch (InterruptedException | ExecutionException ex) {
             throw new RuntimeException("Error processing the move.", ex);
         } catch (TimeoutException ex) {
             throw new TurnTimeoutException();
         }
-
-
-//    public void setMyTurn(boolean isMyTurn) {
-//        this.isMyTurn = isMyTurn;
-//    }
     }
 
     @Override

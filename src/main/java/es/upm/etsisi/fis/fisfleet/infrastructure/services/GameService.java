@@ -17,11 +17,9 @@ public interface GameService {
 
     void handlePartidaState(Partida partida, UUID gameId);
 
-    /**
-     * TODO: Process special abilities for human player
-     * FIXME: Integrate with HumanPlayer and MoveRequestWaiter classes
-     */
     void sendPartidaView(Partida partida, Long lastPlayerId, HashMap<String, Object> result, Set<WebSocketSession> sessions);
+
+    void sendRevealedRow(Long playerId, Partida partida, Set<WebSocketSession> sessions);
 }
 
 //    should I add GameStateDTO createPvPMatch(); ?

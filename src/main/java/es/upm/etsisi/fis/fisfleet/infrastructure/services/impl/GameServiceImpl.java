@@ -2,6 +2,7 @@ package es.upm.etsisi.fis.fisfleet.infrastructure.services.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import es.upm.etsisi.fis.fisfleet.api.dto.GameViewDTO;
+import es.upm.etsisi.fis.fisfleet.api.dto.RevealedRowDTO;
 import es.upm.etsisi.fis.fisfleet.api.dto.SpecialAbility;
 import es.upm.etsisi.fis.fisfleet.infrastructure.cache.GameCacheService;
 import es.upm.etsisi.fis.fisfleet.infrastructure.exceptions.GameNotFoundException;
@@ -57,6 +58,43 @@ public class GameServiceImpl implements GameService {
         }
     }
 
+    public void sendRevealedRow(Long playerId, Partida partida, Set<WebSocketSession> sessions) {
+        String revealedRow = partida.get_fila();
+
+        RevealedRowDTO dto = RevealedRowDTO.builder()
+                .content(revealedRow)
+                .build();
+
+        String sessionId = this.getSessionId(playerId);
+        if (sessionId == null) return;
+
+        sessions.stream()
+                .filter(s -> s.getId().equals(sessionId))
+                .findFirst()
+                .ifPresent(session -> {
+                    try {
+                        String payload = objectMapper.writeValueAsString(dto);
+                        session.sendMessage(new TextMessage(payload));
+                        log.debug("Revealed row sent to player {}: {}", playerId, revealedRow);
+                    } catch (IOException e) {
+                        log.error("Error sending revealed row to player {}: {}", session.getId(), e.getMessage(), e);
+                    }
+                });
+    }
+
+    private String getSessionId(Long playerId) {
+        Optional<String> sessionIdOpt = gameCacheService.getPlayerSession(playerId);
+        if (sessionIdOpt.isEmpty()) {
+            log.warn("No session found for player ID {}", playerId);
+            return null;
+        }
+        return sessionIdOpt.get();
+    }
+
+    /**
+     * TODO: Process special abilities for human player
+     * FIXME: Integrate with HumanPlayer and MoveRequestWaiter classes
+     */
     @Override
     public void sendPartidaView(Partida partida, Long lastPlayerId, HashMap<String, Object> result, Set<WebSocketSession> sessions) {
         Long opponentId = Long.valueOf(partida.getTurnoName());
@@ -67,7 +105,7 @@ public class GameServiceImpl implements GameService {
 
         Nave nave = (Nave) result.get("Nave");
         GameViewDTO view = GameViewDTO.builder()
-                .availableAbility(SpecialAbility.fromShipName(nave.getName()))
+                .availableAbility(nave != null ? SpecialAbility.fromShipName(nave.getName()) : SpecialAbility.NONE)
                 .ownBoard(partida.getTableros().get(0))
                 .enemyBoardMasked(partida.getTableros().get(1))
                 .build();
@@ -76,13 +114,9 @@ public class GameServiceImpl implements GameService {
     }
 
     private void sendViewToPlayer(Long playerId, GameViewDTO view, Set<WebSocketSession> sessions) {
-        Optional<String> sessionIdOpt = gameCacheService.getPlayerSession(playerId);
-        if (sessionIdOpt.isEmpty()) {
-            log.warn("No session found for player ID {}", playerId);
-            return;
-        }
+        String sessionId = this.getSessionId(playerId);
+        if (sessionId == null) return;
 
-        String sessionId = sessionIdOpt.get();
         sessions.stream()
                 .filter(s -> s.getId().equals(sessionId))
                 .findFirst()
