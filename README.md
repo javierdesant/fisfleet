@@ -107,6 +107,15 @@ fisfleet/
 > dependencias.
 
 ---
+## Diagramas de diseño del sistema
+### 😎Diagrama de componentes:
+Generado utilizando los componentes arquitectónicos y sus relaciones a través de las interfaces.
+
+![Diagrama de componentes.jpg](docs%2FDiagrama%20de%20componentes.jpg)
+### 😎Diagrama de despliegue:
+Representa la implantación del sistema.
+
+![Diagrama de despliegue.jpg](docs%2FDiagrama%20de%20despliegue.jpg)
 
 ## ⚙️ Configuración y Ejecución
 
