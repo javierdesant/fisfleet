@@ -10,9 +10,9 @@ import java.util.Scanner;
 public class FisfleetApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(FisfleetApplication.class, args);
-
 		ControladorPartida.getInstance(new Scanner(""));
+
+		SpringApplication.run(FisfleetApplication.class, args);
 	}
 
 }
