@@ -2,6 +2,7 @@ package es.upm.etsisi.fis.fisfleet.infrastructure.controllers;
 
 import es.upm.etsisi.fis.fisfleet.infrastructure.exceptions.GameNotFoundException;
 import es.upm.etsisi.fis.fisfleet.infrastructure.exceptions.NotPlayerTurnException;
+import es.upm.etsisi.fis.fisfleet.infrastructure.exceptions.RegistrationException;
 import es.upm.etsisi.fis.fisfleet.infrastructure.exceptions.TurnTimeoutException;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -57,6 +58,11 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(NotPlayerTurnException.class)
     public ResponseEntity<String> handleNotPlayerTurnException(NotPlayerTurnException ex) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ex.getMessage());
+    }
+
+    @ExceptionHandler(RegistrationException.class)
+    public ResponseEntity<String> handleRegistrationException(RegistrationException ex) {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ex.getMessage());
     }
 }

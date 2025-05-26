@@ -24,7 +24,7 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAuthority('MANAGE_USERS') or principal.username == #id.toString()")
+    @PreAuthorize("hasAuthority('MANAGE_USERS') or authentication.token")
     public ResponseEntity<UserEntity> getUserById(@PathVariable Long id) {
         UserEntity user = userService.read(id);
         return ResponseEntity.ok(user);
