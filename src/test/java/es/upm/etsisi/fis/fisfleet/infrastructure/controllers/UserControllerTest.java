@@ -49,7 +49,7 @@ class UserControllerTest {
 
     @BeforeEach
     void init() {
-        validRequest = DataProvider.userRequestListMock().get(0);
+        validRequest = DataProvider.userRequestValidListMock().get(0);
         validUser = DataProvider.userEntityMock();
         validUser.setId(1L);
     }
@@ -73,48 +73,8 @@ class UserControllerTest {
     @Test
     void testCreateUser_validationError() throws Exception {
 
-        UserRequest invalidAliasEmpty = UserRequest.builder()
-                .username("valid@upm.es")
-                .alias("")
-                .password("password123")
-                .build();
-
-
-        UserRequest invalidEmail = UserRequest.builder()
-                .username("invalid@urss.es")
-                .alias("ValidAlias")
-                .password("password123")
-                .build();
-
-
-        UserRequest invalidAliasPattern = UserRequest.builder()
-                .username("valid@upm.es")
-                .alias("inv@lid")
-                .password("password123")
-                .build();
-
-
-        UserRequest invalidAliasTooLong = UserRequest.builder()
-                .username("valid@upm.es")
-                .alias("AliasTooLong123")
-                .password("password123")
-                .build();
-
-
-        UserRequest forbiddenAlias = UserRequest.builder()
-                .username("valid@upm.es")
-                .alias("admin")
-                .password("password123")
-                .build();
-
-
-        for (UserRequest invalidRequest : List.of(
-                invalidAliasEmpty,
-                invalidEmail,
-                invalidAliasPattern,
-                invalidAliasTooLong,
-                forbiddenAlias
-        )) {
+        for (UserRequest invalidRequest : DataProvider.userRequestNotValidListMock()
+        ) {
             mockMvc.perform(post("/api/users")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(toJson(invalidRequest)))
