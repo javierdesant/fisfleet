@@ -7,6 +7,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
@@ -23,12 +24,14 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAuthority('MANAGE_USERS') or principal.username == #id.toString()")
     public ResponseEntity<UserEntity> getUserById(@PathVariable Long id) {
         UserEntity user = userService.read(id);
         return ResponseEntity.ok(user);
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAuthority('MANAGE_USERS') or principal.username == #id.toString()")
     public ResponseEntity<UserEntity> updateUser(
             @PathVariable Long id,
             @Valid @RequestBody UserRequest userRequest
@@ -38,6 +41,7 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('MANAGE_USERS')")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
         userService.delete(id);
         return ResponseEntity.noContent().build();

@@ -7,6 +7,7 @@ import es.upm.etsisi.fis.fisfleet.infrastructure.services.GameService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.*;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 
 import java.security.Principal;
@@ -20,6 +21,7 @@ public class GameController {
     private final GameService gameService;
 
     @MessageMapping("/game/{gameId}/move")
+    @PreAuthorize("hasAuthority('PLAY_GAME')")
     public void handleMove(@DestinationVariable UUID gameId,
                            @Payload MoveRequest moveRequest,
                            Principal principal) {
