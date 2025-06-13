@@ -110,17 +110,17 @@ fisfleet/
 ## Diagramas de diseño del sistema
 ### 😎Diagrama de diseño:
 
-![Main.jpg](docs%2FMain.jpg)
+![Main.jpg](docs/Main.jpg)
 
 ### 😎Diagrama de componentes:
 Generado utilizando los componentes arquitectónicos y sus relaciones a través de las interfaces.
 
-![Diagrama](docs/Diagrama de componentes.jpg)
+![Diagrama](docs/Diagrama%20de%20componentes.jpg)
 
 ### 😎Diagrama de despliegue:
 Representa la implantación del sistema.
 
-![Diagrama](docs/Diagrama de despliegue.jpg)
+![Diagrama](docs/Diagrama%20de%20despliegue.jpg)
 
 ## ⚙️ Configuración y Ejecución
 
